@@ -3,32 +3,18 @@ package com.alvessss.folderbrowser;
 @SuppressWarnings("all")
 public class FileSupport
 {
-   private String name;
-   private final int fileIconId;
-   private final String[] supportedExtensions;
+   public String name;
+   public int icon;
+   public String[] extensions;
 
-   public FileSupport(
-      String name,
-      int fileIconId,
-      String... supportedExtensions)
+   public static FileSupport[] getArray(int n)
    {
-      this.name = name;
-      this.fileIconId = fileIconId;
-      this.supportedExtensions = supportedExtensions;
-   }
+      FileSupport[] fileSupportArray = new FileSupport[n];
+      for (FileSupport fs : fileSupportArray)
+      {
+         fs = new FileSupport();
+      }
 
-   public String getName()
-   {
-      return name;
-   }
-
-   public int getFileIconId()
-   {
-      return fileIconId;
-   }
-
-   public String[] getSupportedExtensions()
-   {
-      return supportedExtensions;
+      return fileSupportArray;
    }
 }

@@ -1,388 +1,170 @@
 package com.alvessss.folderbrowser;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+
+import java.util.ArrayList;
+
+import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.LayoutInflater;
+import android.graphics.drawable.Drawable;
 
 @SuppressWarnings("all")
 public class FolderBrowser
 {
-   public static final int DEFAULT_COLUMNS = 6;
+   private final AppCompatActivity activity;
+   private final RecyclerViewData recyclerViewData;
 
-   public static final String PERMISSION_READ = Manifest.permission.READ_EXTERNAL_STORAGE;
-   public static final String PERMISSION_WRITE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-
-   private AppCompatActivity parentActivity;
-   private Context parentContext;
-
-   private int recyclerViewID;
-   private int itemLayoutID;
-
-   private int itemFilenameID;
-   private int itemFileIconID;
-
-   private ArrayList<_ItemFields> itemFieldsArr = new ArrayList<>();
-
-   private int defaultFileIcon;
-   private int defaultDirectoryIcon;
-
-   @Nullable private FileSupport[] trackedFiles;
-
-   private RecyclerView recyclerView;
-   private _RvAdapter adapter = new _RvAdapter(itemFieldsArr);
-
-   private GridLayoutManager gridLayoutManager;
-   private int gridLayoutColumns;
-
-   private boolean _needPermision = true;
-   private ActivityResultLauncher<String> permissionLauncher =
-      parentActivity.registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-         if (isGranted)
-         {
-            _start();
-         }
-         else
-         {
-            _permissionNotGranted();
-         }
-      });
-
-   public static void childPaths(String root,
-                                 ArrayList<String> pathsArr, String targetMimeType)
+   public FolderBrowser(final AppCompatActivity activity, final RecyclerViewData recyclerViewData)
    {
-      String currentMimeType = "";
-      File currentDir = new File(root);
-      File[] dirFiles = currentDir.listFiles();
-      if (currentDir.exists() == false || dirFiles == null)
+      this.activity = activity;
+      this.recyclerViewData = recyclerViewData;
+
+      if (this.activity == null)
       {
+         DEBUG.throwError("ACTIVITY CANNOT BE NULL!");
          return;
       }
 
-      for (int i = 0; i < dirFiles.length; i++){
-         File currentInode = dirFiles[i];
-         if (!currentInode.canRead())
+      if (!this.recyclerViewData.checkFields())
+      {
+         DEBUG.throwError("RECYCLER VIEW DATA > MISSING SOME ID'S... bye");
+         return;
+      }
+
+      this.recyclerViewData.setAdapter();
+      assert this.recyclerViewData.setView(this.activity);
+   }
+
+   public static class RecyclerViewData
+   {
+      public int id;
+      public int itemLayoutId;
+      public int columns = 6;
+
+      public int defaultFileIcon;
+      public int defaultDirectoryIcon;
+
+      public int textViewForInodeName;
+      public int imageViewForInodeIcon;
+      public int textViewForInodePath;
+
+      private RecyclerView recyclerView;
+      private Adapter adapter;
+      private ArrayList<InodeModel> inodeModel;
+
+      private boolean setAdapter()
+      {
+         adapter = new Adapter();
+         inodeModel = new ArrayList<>();
+         return true;
+      }
+
+      private boolean setView(final AppCompatActivity viewActivity)
+      {
+         recyclerView = (RecyclerView) viewActivity.findViewById(id);
+         recyclerView.setAdapter(adapter);
+         return DEBUG.checkView(recyclerView, id, true);
+      }
+
+      private boolean checkFields()
+      {
+         return
+            DEBUG.checkId(id) &&
+               DEBUG.checkId(itemLayoutId) &&
+               DEBUG.checkId(defaultFileIcon) &&
+               DEBUG.checkId(defaultDirectoryIcon) &&
+               DEBUG.checkId(textViewForInodeName) &&
+               DEBUG.checkId(imageViewForInodeIcon);
+      }
+
+      private class InodeModel
+      {
+         String inodeName;
+         Drawable inodeIcon;
+      }
+
+      private class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>
+      {
+         @Override public void onBindViewHolder(Adapter.ViewHolder viewHolder, int position)
          {
-            continue;
+            viewHolder.textView.setText(inodeModel.get(position).inodeName);
+            viewHolder.imageView.setImageDrawable(inodeModel.get(position).inodeIcon);
          }
 
-         else if (currentInode.isDirectory())
+         @Override public Adapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
          {
-            childPaths(currentInode.getAbsolutePath(), pathsArr, targetMimeType);
+            View itemView = LayoutInflater.from(viewGroup.getContext())
+               .inflate(itemLayoutId, viewGroup, false);
+
+            return new Adapter.ViewHolder(itemView);
          }
 
-         if (currentInode.isFile())
+         @Override public int getItemCount()
          {
-            currentMimeType = FolderBrowser.getMimeType(currentInode);
-            if (currentMimeType == null || !currentMimeType.equals(targetMimeType))
+            return inodeModel.size();
+         }
+
+         class ViewHolder extends RecyclerView.ViewHolder
+         {
+            TextView textView;
+            ImageView imageView;
+
+            ViewHolder(View itemView)
             {
-               continue;
+               super(itemView);
+
+               boolean logging = true;
+
+               textView = itemView.findViewById(textViewForInodeName);
+               if (!DEBUG.checkView(textView, textViewForInodeName, logging))
+               {
+                  DEBUG.throwError("textView is null");
+               }
+
+               imageView = itemView.findViewById(imageViewForInodeIcon);
+               if (!DEBUG.checkView(imageView, imageViewForInodeIcon, logging))
+               {
+                  DEBUG.throwError("imageView is null");
+               }
             }
-            pathsArr.add(currentInode.getAbsolutePath());
          }
       }
    }
 
-   public static String getMimeType(File file)
+   private static abstract class DEBUG
    {
-      String mimeType = null;
-      try
+      static void throwError(String msg)
       {
-         mimeType = Files.probeContentType(Paths.get(file.toURI()));
-      } catch (IOException | NullPointerException e)
-      {
-         e.printStackTrace();
-      }
-      return mimeType;
-   }
-
-   public static Builder setNew()
-   {
-      return new Builder();
-   }
-
-   private FolderBrowser() // PRIVATE CONSTRUCTOR OF BUILDER
-   {
-      ;
-   }
-
-   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-   private void _start()
-   {
-      if (!_checkPermission(PERMISSION_READ))
-      {
-         permissionLauncher.launch(PERMISSION_READ);
-         return;
+         new RuntimeException(msg);
       }
 
-      if (!_checkPermission(PERMISSION_WRITE))
+      static boolean checkId(int viewId)
       {
-         permissionLauncher.launch(PERMISSION_WRITE);
-         return;
-      }
-   }
-
-   private boolean _checkPermission(String permission)
-   {
-      if (ContextCompat.checkSelfPermission(parentContext, permission) == PackageManager.PERMISSION_DENIED)
-      {
-         return false;
-      }
-
-      return true;
-   }
-
-   private void _permissionNotGranted()
-   {
-      ;
-   }
-
-   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-   public static class Builder
-   {
-      private FolderBrowser privateInstance = new FolderBrowser();
-
-      private ArrayList<FileSupport> tempTrackedFiles = new ArrayList<>();
-
-      public Builder setContext(@NonNull Context context)
-      {
-         privateInstance.parentContext = context;
-         privateInstance.parentActivity = (AppCompatActivity) context;
-         return this;
-      }
-
-      public Builder setRecyclerView(int id)
-      {
-         return setRecyclerView(id, FolderBrowser.DEFAULT_COLUMNS);
-      }
-
-      public Builder setRecyclerView(int id, int columns)
-      {
-         privateInstance.recyclerViewID = id;
-         privateInstance.gridLayoutColumns = 6;
-         return this;
-      }
-
-      public Builder setRecyclerViewItem(int layoutId, int fileNameId, int fileIconId)
-      {
-         privateInstance.itemLayoutID = layoutId;
-         privateInstance.itemFilenameID = fileNameId;
-         privateInstance.itemFileIconID = fileIconId;
-
-         return this;
-      }
-
-      public Builder setDefaultIcons(int fileIcon, int directoryIcon)
-      {
-         privateInstance.defaultFileIcon = fileIcon;
-         privateInstance.defaultDirectoryIcon = directoryIcon;
-
-         return this;
-      }
-
-      public Builder setNewSupportForFile(FileSupport fileSupport)
-      {
-         tempTrackedFiles.add(fileSupport);
-         return this;
-      }
-
-      public Builder needPermission(boolean value)
-      {
-         privateInstance._needPermision = true;
-         return this;
-      }
-
-      public FolderBrowser build()
-      {
-         if (_setup())
-         {
-            return privateInstance;
-         }
-         else
-         {
-            new RuntimeException("Missing some settings. Check the log above!");
-            return null;
-         }
-      }
-
-      private Builder() // PRIVATE CONSTRUCTOR OF BUILDER
-      {
-         ;
-      }
-
-      private boolean _setup()
-      {
-         if ( _checkContext() &&
-            _checkRecylerViewAndGridLayout() &&
-            _checkRecyclerViewItem() &&
-            _checkDefaultIcons() )
-         {
-            _setTempTrackedFiles();
-            return true;
-         }
-
-         return false;
-      }
-
-      private void _setTempTrackedFiles()
-      {
-         privateInstance.trackedFiles = tempTrackedFiles.toArray(new FileSupport[tempTrackedFiles.size()]);
-      }
-
-      private boolean _checkContext()
-      {
-         if (privateInstance.parentActivity == null ||
-            privateInstance.parentContext == null)
+         if (viewId == 0)
          {
             return false;
          }
          return true;
       }
 
-      private boolean _checkRecylerViewAndGridLayout()
+      static boolean checkView(View view, int id, boolean log)
       {
-         privateInstance.recyclerView = privateInstance.parentActivity
-            .findViewById(privateInstance.recyclerViewID);
-
-         privateInstance.gridLayoutManager = new GridLayoutManager(
-            privateInstance.parentContext, (privateInstance.gridLayoutColumns)
-         );
-
-         if (privateInstance.recyclerView == null ||
-            privateInstance.gridLayoutManager == null)
+         if (view == null)
          {
+            if (log)
+            {
+               Log.d("VIEW NOT FOUND", "id: " + Integer.toString(id));
+            }
             return false;
          }
 
          return true;
-      }
-
-      private boolean _checkRecyclerViewItem()
-      {
-         if ( _checkId(privateInstance.itemLayoutID) &&
-            _checkId(privateInstance.itemFilenameID) &&
-            _checkId(privateInstance.itemFileIconID) )
-         {
-            return true;
-         }
-
-         return false;
-      }
-
-      private boolean _checkDefaultIcons()
-      {
-         if (_checkId(privateInstance.defaultFileIcon)
-            && _checkId(privateInstance.defaultDirectoryIcon))
-         {
-            return true;
-         }
-         return false;
-      }
-
-      private boolean _checkId(int id)
-      {
-         if (id != 0)
-         {
-            return true;
-         }
-
-         return false;
-      }
-
-      // unused
-      private boolean _checkLayout(Context context, int layoutId)
-      {
-
-         final View testView;
-         try
-         {
-            testView = LayoutInflater.from(context)
-               .inflate(layoutId, null);
-            return true;
-         }
-         catch (Resources.NotFoundException e)
-         {
-            e.printStackTrace();
-            return false;
-         }
-      }
-
-   }
-
-   private class _ItemFields
-   {
-      public String filename;
-      public Drawable icon;
-   }
-
-   private class _RvAdapter extends
-      RecyclerView.Adapter<_RvAdapter.Holder>
-   {
-      private ArrayList<_ItemFields> itemFields;
-
-      public _RvAdapter(ArrayList<_ItemFields> itemFields)
-      {
-         this.itemFields = itemFields;
-      }
-
-      @NonNull @Override
-      public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
-      {
-         View view = LayoutInflater.from(parentContext)
-            .inflate(recyclerViewID, parent, false);
-
-         return new Holder(view);
-      }
-
-      @Override
-      public void onBindViewHolder(@NonNull Holder holder, int position)
-      {
-         holder.filename.setText(itemFields.get(position).filename);
-         holder.icon.setImageDrawable(itemFields.get(position).icon);
-      }
-
-      @Override
-      public int getItemCount()
-      {
-         return itemFields.size();
-      }
-
-      public class Holder extends
-         RecyclerView.ViewHolder
-      {
-         TextView filename;
-         ImageView icon;
-
-         public Holder(@NonNull View itemView)
-         {
-            super(itemView);
-
-            filename = itemView.findViewById(itemFilenameID);
-            icon = itemView.findViewById(itemFileIconID);
-         }
       }
    }
 }
