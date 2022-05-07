@@ -2,4 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.alvessss.folderbrowser">
 
+    <application>
+        <activity
+            android:name=".TestActivity"
+            android:exported="true" />
+    </application>
+
 </manifest>

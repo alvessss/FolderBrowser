@@ -1,6 +1,7 @@
 package com.alvessss.folderbrowser;
 
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.util.Log;
@@ -19,11 +20,16 @@ public class FolderBrowser
 {
    private final AppCompatActivity activity;
    private final RecyclerViewData recyclerViewData;
+   private final FileSupport[] supportedFiles;
 
-   public FolderBrowser(final AppCompatActivity activity, final RecyclerViewData recyclerViewData)
+   public FolderBrowser(final AppCompatActivity activity,
+      final RecyclerViewData recyclerViewData, final FileSupport[] supportedFiles)
    {
       this.activity = activity;
       this.recyclerViewData = recyclerViewData;
+
+      // TODO: validations on array:
+      this.supportedFiles = supportedFiles;
 
       if (this.activity == null)
       {
@@ -38,7 +44,7 @@ public class FolderBrowser
       }
 
       this.recyclerViewData.setAdapter();
-      assert this.recyclerViewData.setView(this.activity);
+      this.recyclerViewData.setView(this.activity);
    }
 
    public static class RecyclerViewData
@@ -133,6 +139,61 @@ public class FolderBrowser
                   DEBUG.throwError("imageView is null");
                }
             }
+         }
+      }
+   }
+
+   // class: DirectoryContent:
+      // class: Inode
+         // method: Inode[] getFiles
+         // method: Inode[] getDirs
+         // member: Inode[] childInodes
+
+   private static class Inode
+   {
+      String path;
+      String name;
+      Type type;
+      Inode[] childs;
+
+      // TODO: testing
+      static Inode[] getTreeFrom(String inodePath)
+      {
+         File rootFile = new File(inodePath);
+         if (rootFile == null)
+         {
+            return null;
+         }
+
+         File[] listedFiles = rootFile.listFiles();
+         if (listedFiles.length == 0)
+         {
+            return null;
+         }
+
+         ArrayList<Inode> tempInodeArr = new ArrayList<>();
+         for (int i = 0; i < listedFiles.length; i++)
+         {
+            Inode currInode = new Inode();
+
+            currInode.name = listedFiles[0].getName();
+            currInode.path = listedFiles[0].getAbsolutePath();
+            currInode.type = listedFiles[0].isFile() ? Type.FILE : Type.DIRECTORY;
+            currInode.childs = getTreeFrom(currInode.path);
+
+            tempInodeArr.add(currInode);
+         }
+
+         return tempInodeArr.toArray(new Inode[tempInodeArr.size()]);
+      }
+
+      static enum Type
+      {
+         FILE(0), DIRECTORY(1);
+         int val;
+         Type(int value)
+         {
+            val = value;
          }
       }
    }
