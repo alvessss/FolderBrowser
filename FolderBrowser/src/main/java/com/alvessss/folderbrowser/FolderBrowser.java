@@ -47,6 +47,47 @@ public class FolderBrowser
       this.recyclerViewData.setView(this.activity);
    }
 
+   public static class Inode
+   {
+      String path;
+      String name;
+      Type type;
+      Inode[] childs;
+
+      public static Inode[] getInodeTree(String inodePath)
+      {
+         File root = new File(inodePath);
+         if (root == null) return new Inode[0];
+
+         File[] childs = root.listFiles();
+         if (childs.length == 0) return new Inode[0];
+
+         Inode[] tree = new Inode[childs.length];
+         int index = 0;
+         for (File child : childs)
+         {
+            Inode inode = new Inode();
+            inode.name = child.getName();
+            inode.path = child.getAbsolutePath();
+            inode.type = child.isFile() ? Type.FILE : Type.DIRECTORY;
+            inode.childs = getInodeTree(inode.path);
+            tree[index++] = inode;
+         }
+
+         return tree;
+      }
+
+      static enum Type
+      {
+         FILE(0), DIRECTORY(1);
+         int val;
+         Type(int value)
+         {
+            val = value;
+         }
+      }
+   }
+
    public static class RecyclerViewData
    {
       public int id;
@@ -139,61 +180,6 @@ public class FolderBrowser
                   DEBUG.throwError("imageView is null");
                }
             }
-         }
-      }
-   }
-
-   // class: DirectoryContent:
-      // class: Inode
-         // method: Inode[] getFiles
-         // method: Inode[] getDirs
-         // member: Inode[] childInodes
-
-   private static class Inode
-   {
-      String path;
-      String name;
-      Type type;
-      Inode[] childs;
-
-      // TODO: testing
-      static Inode[] getTreeFrom(String inodePath)
-      {
-         File rootFile = new File(inodePath);
-         if (rootFile == null)
-         {
-            return null;
-         }
-
-         File[] listedFiles = rootFile.listFiles();
-         if (listedFiles.length == 0)
-         {
-            return null;
-         }
-
-         ArrayList<Inode> tempInodeArr = new ArrayList<>();
-         for (int i = 0; i < listedFiles.length; i++)
-         {
-            Inode currInode = new Inode();
-
-            currInode.name = listedFiles[0].getName();
-            currInode.path = listedFiles[0].getAbsolutePath();
-            currInode.type = listedFiles[0].isFile() ? Type.FILE : Type.DIRECTORY;
-            currInode.childs = getTreeFrom(currInode.path);
-
-            tempInodeArr.add(currInode);
-         }
-
-         return tempInodeArr.toArray(new Inode[tempInodeArr.size()]);
-      }
-
-      static enum Type
-      {
-         FILE(0), DIRECTORY(1);
-         int val;
-         Type(int value)
-         {
-            val = value;
          }
       }
    }
