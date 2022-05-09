@@ -28,7 +28,6 @@ public class FolderBrowser
       this.activity = activity;
       this.recyclerViewData = recyclerViewData;
 
-      // TODO: validations on array:
       this.supportedFiles = supportedFiles;
 
       if (this.activity == null)
@@ -77,7 +76,19 @@ public class FolderBrowser
          return tree;
       }
 
-      static enum Type
+      public static String[] extractPaths(Inode[] inodeTree)
+      {
+         String[] paths = new String[inodeTree.length];
+         int index = 0;
+         for (Inode inode : inodeTree)
+         {
+            paths[index++] = inode.path;
+         }
+
+         return paths;
+      }
+
+      public static enum Type
       {
          FILE(0), DIRECTORY(1);
          int val;
