@@ -59,7 +59,7 @@ public class FolderBrowser
          if (root == null) return new Inode[0];
 
          File[] childs = root.listFiles();
-         if (childs.length == 0) return new Inode[0];
+         if (childs == null) return new Inode[0];
 
          Inode[] tree = new Inode[childs.length];
          int index = 0;
