@@ -76,12 +76,12 @@ public class FolderBrowser
          return tree;
       }
 
-      public static void extractPathsFromTree(ArrayList<String> ptr, Inode inodeTree)
+      public static void extractPathsFromInodeTree(ArrayList<String> ptr, Inode inodeTree)
       {
          for (Inode inode : inodeTree.childs)
          {
             ptr.add(inode.path);
-            extractPathsFromTree(ptr, inode);
+            extractPathsFromInodeTree(ptr, inode);
          }
       }
 
