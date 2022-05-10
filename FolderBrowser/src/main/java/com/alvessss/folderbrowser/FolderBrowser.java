@@ -76,16 +76,13 @@ public class FolderBrowser
          return tree;
       }
 
-      public static String[] extractPaths(Inode[] inodeTree)
+      public static void extractPathsFromTree(ArrayList<String> ptr, Inode inodeTree)
       {
-         String[] paths = new String[inodeTree.length];
-         int index = 0;
-         for (Inode inode : inodeTree)
+         for (Inode inode : inodeTree.childs)
          {
-            paths[index++] = inode.path;
+            ptr.add(inode.path);
+            extractPathsFromTree(ptr, inode);
          }
-
-         return paths;
       }
 
       public static enum Type
