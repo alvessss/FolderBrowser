@@ -71,6 +71,10 @@ public class FolderBrowser
          {
             inode.childs = getInodeTree(inode.path);
          }
+         else
+         {
+            inode.childs = new Inode[0];
+         }
 
          return inode;
       }
