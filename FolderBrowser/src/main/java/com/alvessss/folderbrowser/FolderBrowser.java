@@ -48,10 +48,10 @@ public class FolderBrowser
 
    public static class Inode
    {
-      String path;
-      String name;
-      Type type;
-      Inode[] childs;
+      public String path;
+      public String name;
+      public Type type;
+      public Inode[] childs;
 
       public static Inode[] getInodeTree(String inodePath)
       {
