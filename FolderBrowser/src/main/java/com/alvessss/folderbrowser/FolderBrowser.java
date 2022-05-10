@@ -53,6 +53,28 @@ public class FolderBrowser
       public Type type;
       public Inode[] childs;
 
+      private Inode()
+      {
+         ;
+      }
+
+      public static Inode getInode(String inotePath, boolean recursive)
+      {
+         File file = new File(inotePath);
+         if (file == null) return  null;
+
+         Inode inode = new Inode();
+         inode.name = file.getName();
+         inode.path = file.getAbsolutePath();
+         inode.type = file.isFile() ? Type.FILE : Type.DIRECTORY;
+         if (recursive)
+         {
+            inode.childs = getInodeTree(inode.path);
+         }
+
+         return inode;
+      }
+
       public static Inode[] getInodeTree(String inodePath)
       {
          File root = new File(inodePath);
