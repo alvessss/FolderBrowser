@@ -1,13 +1,14 @@
 package com.alvessss.folderbrowser;
 
-
 import java.io.File;
 import java.util.ArrayList;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.view.View;
@@ -15,35 +16,76 @@ import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.graphics.drawable.Drawable;
 
+
 @SuppressWarnings("all")
 public class FolderBrowser
 {
-   private final AppCompatActivity activity;
-   private final RecyclerViewData recyclerViewData;
+   private final AppCompatActivity parentActivity;
    private final FileSupport[] supportedFiles;
+   private final RecyclerViewHandler recyclerViewHandler;
 
-   public FolderBrowser(final AppCompatActivity activity,
-      final RecyclerViewData recyclerViewData, final FileSupport[] supportedFiles)
+   private Inode root;
+   private Inode defaultRoot;
+
+   public FolderBrowser(@NonNull final AppCompatActivity activity,
+      @NonNull final RecyclerViewData recyclerViewData,
+      final FileSupport[] supportedFiles)
    {
-      this.activity = activity;
-      this.recyclerViewData = recyclerViewData;
+     parentActivity = activity;
+     recyclerViewHandler = new RecyclerViewHandler(recyclerViewData);
+     
+     if (supportedFiles == null)
+     {
+        this.supportedFiles = new FileSupport[0];
+     }
+     else
+     {
+        this.supportedFiles = supportedFiles;
+     }
 
-      this.supportedFiles = supportedFiles;
+   }
 
-      if (this.activity == null)
+   private void setRecyclerView(RecyclerViewData rvdata)
+   {
+      ;
+   }
+
+   public static class Theme
+   {
+      private static final Theme DEFAULT;
+      static
       {
-         DEBUG.throwError("ACTIVITY CANNOT BE NULL!");
-         return;
+         DEFAULT = new Theme();
+         DEFAULT.name = "Ocean";
+         DEFAULT.folderColor = R.color.ocean_blue_foreground;
+         DEFAULT.iconColor = R.color.ocean_white_foreground;
+         DEFAULT.backgroundColor = R.color.ocean_blue_background;
       }
 
-      if (!this.recyclerViewData.checkFields())
+      private int folderColor;
+      private int iconColor;
+      private int backgroundColor;
+      private String name;
+
+      public void setFolderColor(int resourceId)
       {
-         DEBUG.throwError("RECYCLER VIEW DATA > MISSING SOME ID'S... bye");
-         return;
+         folderColor = resourceId;
       }
 
-      this.recyclerViewData.setAdapter();
-      this.recyclerViewData.setView(this.activity);
+      public void setIconColor(int resourceId)
+      {
+         iconColor = resourceId;
+      }
+
+      public void setBackgroundColor(int resourceId)
+      {
+         backgroundColor = resourceId;
+      }
+
+      public void setName(String name)
+      {
+         this.name = name;
+      }
    }
 
    /**
@@ -165,7 +207,9 @@ public class FolderBrowser
 
       public static enum Type
       {
-         FILE(0), DIRECTORY(1);
+         FILE(0),
+         DIRECTORY(1);
+
          int val;
          Type(int value)
          {
@@ -174,49 +218,35 @@ public class FolderBrowser
       }
    }
 
-   public static class RecyclerViewData
+   private static class RecyclerViewData
    {
-      public int id;
-      public int itemLayoutId;
-      public int columns = 6;
+      static final int ID = R.id.recycler_view_for_directory_content;
+      static final int item = R.layout.folder_browser_item;
+      static final int textViewForInodeName = R.id.text_view_for_inode_name;
+      static final int imageViewForInodeIcon = R.id.image_view_for_inode_icon;
+      static final int textViewForInodePath = R.id.text_view_for_current_path;
+      static final int defaultFileIcon = R.drawable.default_icon_for_file;
+      static final int defaultDirectoryIcon = R.drawable.default_icon_for_directory;
 
-      public int defaultFileIcon;
-      public int defaultDirectoryIcon;
+      public int columns = 4;
+      public int customFileIcon;
+      public int customDirectoryIcon;
+   }
 
-      public int textViewForInodeName;
-      public int imageViewForInodeIcon;
-      public int textViewForInodePath;
+   private class RecyclerViewHandler
+   {
+      RecyclerView recyclerView;
+      Adapter adapter;
+      ArrayList<InodeModel> inodeData = new ArrayList<>();
 
-      private RecyclerView recyclerView;
-      private Adapter adapter;
-      private ArrayList<InodeModel> inodeModel;
+      final RecyclerViewData recyclerViewData;
 
-      private boolean setAdapter()
+      RecyclerViewHandler(@NonNull final RecyclerViewData recyclerViewData)
       {
-         adapter = new Adapter();
-         inodeModel = new ArrayList<>();
-         return true;
+         this.recyclerViewData = recyclerViewData;
       }
 
-      private boolean setView(final AppCompatActivity viewActivity)
-      {
-         recyclerView = (RecyclerView) viewActivity.findViewById(id);
-         recyclerView.setAdapter(adapter);
-         return DEBUG.checkView(recyclerView, id, true);
-      }
-
-      private boolean checkFields()
-      {
-         return
-            DEBUG.checkId(id) &&
-               DEBUG.checkId(itemLayoutId) &&
-               DEBUG.checkId(defaultFileIcon) &&
-               DEBUG.checkId(defaultDirectoryIcon) &&
-               DEBUG.checkId(textViewForInodeName) &&
-               DEBUG.checkId(imageViewForInodeIcon);
-      }
-
-      private class InodeModel
+      class InodeModel
       {
          String inodeName;
          Drawable inodeIcon;
@@ -226,21 +256,21 @@ public class FolderBrowser
       {
          @Override public void onBindViewHolder(Adapter.ViewHolder viewHolder, int position)
          {
-            viewHolder.textView.setText(inodeModel.get(position).inodeName);
-            viewHolder.imageView.setImageDrawable(inodeModel.get(position).inodeIcon);
+            viewHolder.textView.setText(inodeData.get(position).inodeName);
+            viewHolder.imageView.setImageDrawable(inodeData.get(position).inodeIcon);
          }
 
          @Override public Adapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
          {
             View itemView = LayoutInflater.from(viewGroup.getContext())
-               .inflate(itemLayoutId, viewGroup, false);
+               .inflate(RecyclerViewData.item, viewGroup, false);
 
             return new Adapter.ViewHolder(itemView);
          }
 
          @Override public int getItemCount()
          {
-            return inodeModel.size();
+            return inodeData.size();
          }
 
          class ViewHolder extends RecyclerView.ViewHolder
@@ -254,14 +284,14 @@ public class FolderBrowser
 
                boolean logging = true;
 
-               textView = itemView.findViewById(textViewForInodeName);
-               if (!DEBUG.checkView(textView, textViewForInodeName, logging))
+               textView = itemView.findViewById(RecyclerViewData.textViewForInodeName);
+               if (!DEBUG.checkView(textView, RecyclerViewData.textViewForInodeName, logging))
                {
                   DEBUG.throwError("textView is null");
                }
 
-               imageView = itemView.findViewById(imageViewForInodeIcon);
-               if (!DEBUG.checkView(imageView, imageViewForInodeIcon, logging))
+               imageView = itemView.findViewById(RecyclerViewData.imageViewForInodeIcon);
+               if (!DEBUG.checkView(imageView, RecyclerViewData.imageViewForInodeIcon, logging))
                {
                   DEBUG.throwError("imageView is null");
                }

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="@layout/folder_browser_layout"
+    tools:ignore="hardCodedText, ContentDescription, UseAppTint"
+    android:layout_margin="5dp">
+
+    <ImageView
+        android:id="@+id/image_view_for_inode_icon"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/default_icon_for_directory"
+        android:tint="@color/cool_blue"/>
+
+    <TextView
+        android:id="@+id/text_view_for_inode_name"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:text="Awny - Text Editor for Programmers"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:layout_below="@id/image_view_for_inode_icon"/>
+
+</RelativeLayout>
