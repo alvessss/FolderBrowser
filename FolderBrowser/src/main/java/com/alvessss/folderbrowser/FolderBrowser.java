@@ -3,6 +3,7 @@ package com.alvessss.folderbrowser;
 import java.io.File;
 import java.util.ArrayList;
 
+import android.os.Handler;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -93,7 +94,7 @@ public class FolderBrowser
       View folderBrowserView = LayoutInflater.from(parentActivity)
          .inflate(R.layout.folder_browser_layout, container, false);
 
-      container.addView(folderBrowserView);
+      new Handler().post(()->container.addView(folderBrowserView));
       changeDirectoryTo(rootInode.path);
    }
 
