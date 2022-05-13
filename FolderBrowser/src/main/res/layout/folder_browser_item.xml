@@ -12,7 +12,7 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:src="@drawable/default_icon_for_directory"
-        android:tint="@color/cool_blue"/>
+        android:tint="@color/ocean_blue_foreground"/>
 
     <TextView
         android:id="@+id/text_view_for_inode_name"

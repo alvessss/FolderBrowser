@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,13 +26,22 @@ public class FolderBrowser
    private Inode root;
    private Inode defaultRoot;
 
+   private Theme theme;
+
    public FolderBrowser(@NonNull final AppCompatActivity activity,
       @NonNull final RecyclerViewData recyclerViewData,
       final FileSupport[] supportedFiles)
    {
      parentActivity = activity;
-     recyclerViewHandler = new RecyclerViewHandler(recyclerViewData);
-     
+
+     if (!recyclerViewData.checkFields())
+     {
+        DEBUG.warning("Resource IDS cannot be null");
+        DEBUG.throwError("Set properly the RecyclerViewData! Bye.");
+     }
+
+      recyclerViewHandler = new RecyclerViewHandler(recyclerViewData);
+
      if (supportedFiles == null)
      {
         this.supportedFiles = new FileSupport[0];
@@ -50,6 +58,17 @@ public class FolderBrowser
       ;
    }
 
+   private void setTheme(Theme theme)
+   {
+      if  (!theme.checkFields())
+      {
+         DEBUG.warning("Resource IDS cannot be null");
+         DEBUG.throwError("Set properly the Theme fields! Bye.");
+      }
+
+      this.theme = theme;
+   }
+
    public static class Theme
    {
       private static final Theme DEFAULT;
@@ -62,10 +81,10 @@ public class FolderBrowser
          DEFAULT.backgroundColor = R.color.ocean_blue_background;
       }
 
-      private int folderColor;
-      private int iconColor;
-      private int backgroundColor;
-      private String name;
+      private int folderColor = DEFAULT.folderColor;
+      private int iconColor = DEFAULT.iconColor;;
+      private int backgroundColor = DEFAULT.backgroundColor;
+      private String name = DEFAULT.name;
 
       public void setFolderColor(int resourceId)
       {
@@ -85,6 +104,14 @@ public class FolderBrowser
       public void setName(String name)
       {
          this.name = name;
+      }
+
+      private boolean checkFields()
+      {
+         return DEBUG.checkId(folderColor) &&
+            DEBUG.checkId(iconColor) &&
+            DEBUG.checkId(backgroundColor) &&
+            name != null;
       }
    }
 
@@ -218,19 +245,42 @@ public class FolderBrowser
       }
    }
 
-   private static class RecyclerViewData
+   public static class RecyclerViewData
    {
-      static final int ID = R.id.recycler_view_for_directory_content;
-      static final int item = R.layout.folder_browser_item;
-      static final int textViewForInodeName = R.id.text_view_for_inode_name;
-      static final int imageViewForInodeIcon = R.id.image_view_for_inode_icon;
-      static final int textViewForInodePath = R.id.text_view_for_current_path;
-      static final int defaultFileIcon = R.drawable.default_icon_for_file;
-      static final int defaultDirectoryIcon = R.drawable.default_icon_for_directory;
+      private static final int COLUMNS = 4;
+      private static final int ID = R.id.recycler_view_for_directory_content;
+      private static final int ITEM = R.layout.folder_browser_item;
+      private static final int TEXT_VIEW_FOR_INODE_NAME = R.id.text_view_for_inode_name;
+      private static final int IMAGE_VIEW_FOR_INODE_ICON = R.id.image_view_for_inode_icon;
+      private static final int TEXT_VIEW_FOR_CURRENT_PATH = R.id.text_view_for_current_path;
+      private static final int DEFAULT_ICON_FOR_FILE = R.drawable.default_icon_for_file;
+      private static final int DEFAULT_ICON_FOR_DIRECTORY = R.drawable.default_icon_for_directory;
 
-      public int columns = 4;
-      public int customFileIcon;
-      public int customDirectoryIcon;
+      private int columns = COLUMNS;
+      private int fileIcon = DEFAULT_ICON_FOR_FILE;
+      private int directoryIcon = DEFAULT_ICON_FOR_DIRECTORY;
+
+      public void setColumns(int columns)
+      {
+         this.columns = columns;
+      }
+
+      public void setFileIcon(int resourceId)
+      {
+         this.fileIcon = resourceId;
+      }
+
+      public void setDirectoryIcon(int resourceId)
+      {
+         this.directoryIcon = resourceId;
+      }
+
+      private boolean checkFields()
+      {
+         return DEBUG.checkId(fileIcon) &&
+            DEBUG.checkId(directoryIcon) &&
+            columns >= 1;
+      }
    }
 
    private class RecyclerViewHandler
@@ -263,7 +313,7 @@ public class FolderBrowser
          @Override public Adapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
          {
             View itemView = LayoutInflater.from(viewGroup.getContext())
-               .inflate(RecyclerViewData.item, viewGroup, false);
+               .inflate(RecyclerViewData.ITEM, viewGroup, false);
 
             return new Adapter.ViewHolder(itemView);
          }
@@ -284,14 +334,14 @@ public class FolderBrowser
 
                boolean logging = true;
 
-               textView = itemView.findViewById(RecyclerViewData.textViewForInodeName);
-               if (!DEBUG.checkView(textView, RecyclerViewData.textViewForInodeName, logging))
+               textView = itemView.findViewById(RecyclerViewData.TEXT_VIEW_FOR_INODE_NAME);
+               if (!DEBUG.checkView(textView, RecyclerViewData.TEXT_VIEW_FOR_INODE_NAME, logging))
                {
                   DEBUG.throwError("textView is null");
                }
 
-               imageView = itemView.findViewById(RecyclerViewData.imageViewForInodeIcon);
-               if (!DEBUG.checkView(imageView, RecyclerViewData.imageViewForInodeIcon, logging))
+               imageView = itemView.findViewById(RecyclerViewData.IMAGE_VIEW_FOR_INODE_ICON);
+               if (!DEBUG.checkView(imageView, RecyclerViewData.IMAGE_VIEW_FOR_INODE_ICON, logging))
                {
                   DEBUG.throwError("imageView is null");
                }
@@ -302,9 +352,15 @@ public class FolderBrowser
 
    private static abstract class DEBUG
    {
+      static final String TAG = "FolderBrowser says";
       static void throwError(String msg)
       {
          new RuntimeException(msg);
+      }
+
+      static void warning(String msg)
+      {
+         Log.i(TAG, msg);
       }
 
       static boolean checkId(int viewId)
