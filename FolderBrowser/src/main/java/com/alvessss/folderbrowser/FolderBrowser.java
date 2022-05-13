@@ -16,12 +16,12 @@ import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.graphics.drawable.Drawable;
 
-
 // TODO: set RecyclerView callbacks
 
 @SuppressWarnings("all")
 public class FolderBrowser
 {
+   private final ViewGroup container;
    private final AppCompatActivity parentActivity;
    private final FileSupport[] supportedFiles;
    private final RecyclerViewHandler recyclerViewHandler;
@@ -59,10 +59,13 @@ public class FolderBrowser
          }
    };
 
-   public FolderBrowser(@NonNull final AppCompatActivity activity,
+   public FolderBrowser(
+      @NonNull final ViewGroup container,
+      @NonNull final AppCompatActivity activity,
       @NonNull final RecyclerViewData recyclerViewData,
       final FileSupport[] supportedFiles)
    {
+     this.container = container;
      parentActivity = activity;
 
      if (!recyclerViewData.checkFields())
@@ -87,7 +90,11 @@ public class FolderBrowser
 
    public void startSearch(Inode choosenInode)
    {
-      ;
+      View folderBrowserView = LayoutInflater.from(parentActivity)
+         .inflate(R.layout.folder_browser_layout, container, false);
+
+      container.addView(folderBrowserView);
+      changeDirectoryTo(rootInode.path);
    }
 
    public void setTheme(Theme theme)
@@ -116,11 +123,28 @@ public class FolderBrowser
 
       for (Inode child : currentInode.childs)
       {
+         model = recyclerViewHandler.new InodeModel();
          fileSupport = FileSupport.classify(supportedFiles, currentInode.name);
-         model = new RecyclerViewHandler.InodeModel();
+
+         if (fileSupport != null)
+         {
+            model.inodeIcon = ResourcesCompat.getDrawable(parentActivity.getResources(), fileSupport.icon, null);
+         }
+         else
+         {
+            if (child.isFile())
+            {
+               model.inodeIcon = ResourcesCompat.getDrawable(parentActivity.getResources(), RecyclerViewData.DEFAULT_ICON_FOR_FILE, null);
+            }
+            else
+            {
+               model.inodeIcon = ResourcesCompat.getDrawable(parentActivity.getResources(), RecyclerViewData.DEFAULT_ICON_FOR_DIRECTORY, null);
+            }
+         }
+
          model.inodeName = child.name;
          model.inodePath = child.path;
-         model.inodeIcon = ResourcesCompat.getDrawable(parentActivity.getResources(), fileSupport.icon, null);
+         model.type = child.type;
          newInodeData.add(model);
       }
 
@@ -416,7 +440,7 @@ public class FolderBrowser
       }
    }
 
-   private static class RecyclerViewHandler
+   private class RecyclerViewHandler
    {
       RecyclerView recyclerView;
       Adapter adapter;
@@ -429,11 +453,12 @@ public class FolderBrowser
          this.recyclerViewData = recyclerViewData;
       }
 
-      static class InodeModel
+      class InodeModel
       {
          String inodeName;
          Drawable inodeIcon;
          String inodePath;
+         Inode.Type type;
       }
 
       private class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>
@@ -443,6 +468,15 @@ public class FolderBrowser
             viewHolder.textViewInodeName.setText(inodeData.get(position).inodeName);
             viewHolder.imageViewInodeIcon.setImageDrawable(inodeData.get(position).inodeIcon);
             viewHolder.textViewInodePath.setText(inodeData.get(position).inodePath);
+
+            if (inodeData.get(position).type == Inode.Type.FILE)
+            {
+               viewHolder.itemView.setOnClickListener(onClickFile);
+            }
+            else
+            {
+               viewHolder.itemView.setOnClickListener(onClickFolder);
+            }
          }
 
          @Override public Adapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
