@@ -16,6 +16,8 @@ import android.view.LayoutInflater;
 import android.graphics.drawable.Drawable;
 
 
+// TODO: set RecyclerView callbacks
+
 @SuppressWarnings("all")
 public class FolderBrowser
 {
@@ -23,8 +25,8 @@ public class FolderBrowser
    private final FileSupport[] supportedFiles;
    private final RecyclerViewHandler recyclerViewHandler;
 
-   private Inode root;
-   private Inode defaultRoot;
+   private Inode rootInode;
+   private Inode currentInode;
 
    private Theme theme;
 
@@ -36,7 +38,8 @@ public class FolderBrowser
 
      if (!recyclerViewData.checkFields())
      {
-        DEBUG.warning("Resource IDS cannot be null");
+        DEBUG.warning("tip 1: Resource IDS cannot be null");
+        DEBUG.warning("tip 2: recyclerViewData.columns must be equal or greater than 1");
         DEBUG.throwError("Set properly the RecyclerViewData! Bye.");
      }
 
@@ -53,20 +56,26 @@ public class FolderBrowser
 
    }
 
-   private void setRecyclerView(RecyclerViewData rvdata)
+   public void startSearch(Inode choosenInode)
    {
       ;
    }
 
-   private void setTheme(Theme theme)
+   public void setTheme(Theme theme)
    {
       if  (!theme.checkFields())
       {
-         DEBUG.warning("Resource IDS cannot be null");
+         DEBUG.warning("tip 1: Resource IDS cannot be null");
+         DEBUG.warning("tip 2: theme.name cannot be null");
          DEBUG.throwError("Set properly the Theme fields! Bye.");
       }
 
       this.theme = theme;
+   }
+
+   private void setRecyclerView(RecyclerViewData rvdata)
+   {
+      ;
    }
 
    public static class Theme
@@ -230,6 +239,16 @@ public class FolderBrowser
       public Inode[] getChilds()
       {
          return childs;
+      }
+
+      public boolean isFile()
+      {
+         return type == Type.FILE;
+      }
+
+      public boolean isDirectory()
+      {
+         return type == Type.DIRECTORY;
       }
 
       public static enum Type
