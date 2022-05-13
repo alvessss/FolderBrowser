@@ -111,14 +111,22 @@ public class FolderBrowser
    {
       currentInode = Inode.getInode(newDirectory, false);
       ArrayList<RecyclerViewHandler.InodeModel> newInodeData = new ArrayList<>();
+      RecyclerViewHandler.InodeModel model;
+      FileSupport fileSupport;
+
       for (Inode child : currentInode.childs)
       {
-         RecyclerViewHandler.InodeModel model = new RecyclerViewHandler.InodeModel();
+         fileSupport = FileSupport.classify(supportedFiles, currentInode.name);
+         model = new RecyclerViewHandler.InodeModel();
          model.inodeName = child.name;
-         model.inodeIcon = ResourcesCompat.getDrawable(parentActivity.getResources(), R.drawable.default_icon_for_directory, null);
          model.inodePath = child.path;
+         model.inodeIcon = ResourcesCompat.getDrawable(parentActivity.getResources(), fileSupport.icon, null);
          newInodeData.add(model);
       }
+
+      assert recyclerViewHandler != null;
+      recyclerViewHandler.inodeData = newInodeData;
+      recyclerViewHandler.adapter.notifyDataSetChanged();
    }
 
    private void highlightFileIcon(ImageView ivFileIcon)
@@ -133,6 +141,52 @@ public class FolderBrowser
       {
          highlightedFileIcon.setColorFilter(theme.iconColor);
       }
+   }
+
+   public static class FileSupport
+   {
+      public String name;
+      public int icon;
+      public String[] extensions;
+
+      public static FileSupport[] getArray(int n)
+      {
+         FileSupport[] fileSupportArray = new FileSupport[n];
+         for (FileSupport fs : fileSupportArray)
+         {
+            fs = new FileSupport();
+         }
+
+         return fileSupportArray;
+      }
+
+      public static FileSupport classify(FileSupport[] supportedFiles, String fileName)
+      {
+         for (FileSupport supportedFile : supportedFiles)
+         {
+            for (String supportedExtension : supportedFile.extensions)
+            {
+               if (supportedExtension.equals(getExt(fileName)));
+               {
+                  return supportedFile;
+               }
+            }
+         }
+
+         return null;
+      }
+
+      public static String getExt(String filePath)
+      {
+         int strLength = filePath.lastIndexOf(".");
+         if (strLength == 0)
+         {
+            return null;
+         }
+
+         return filePath.substring(strLength + 1).toLowerCase();
+      }
+
    }
 
    public static class Theme
