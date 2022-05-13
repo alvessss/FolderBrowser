@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.widget.ImageView;
@@ -28,7 +29,35 @@ public class FolderBrowser
    private Inode rootInode;
    private Inode currentInode;
 
+   private ImageView lastHighlightedFileIcon;
+
    private Theme theme;
+
+   private final View.OnClickListener onClickFolder =
+      new View.OnClickListener()
+      {
+         @Override
+         public void onClick(View view)
+         {
+            TextView tvFolderPath = view.findViewById(RecyclerViewData.TEXT_VIEW_FOR_INODE_PATH);
+            String folderPath = tvFolderPath.getText().toString();
+            changeDirectoryTo(folderPath);
+         }
+   };
+
+   private final View.OnClickListener onClickFile =
+      new View.OnClickListener()
+      {
+         @Override
+         public void onClick(View view)
+         {
+            resetHighlightedFileIcons(lastHighlightedFileIcon);
+            TextView tvFilePath = view.findViewById(RecyclerViewData.TEXT_VIEW_FOR_INODE_PATH);
+            String filePath = tvFilePath.getText().toString();
+            ImageView iconFile = view.findViewById(RecyclerViewData.IMAGE_VIEW_FOR_INODE_ICON);
+            highlightFileIcon(iconFile);
+         }
+   };
 
    public FolderBrowser(@NonNull final AppCompatActivity activity,
       @NonNull final RecyclerViewData recyclerViewData,
@@ -78,6 +107,34 @@ public class FolderBrowser
       ;
    }
 
+   private void changeDirectoryTo(String newDirectory)
+   {
+      currentInode = Inode.getInode(newDirectory, false);
+      ArrayList<RecyclerViewHandler.InodeModel> newInodeData = new ArrayList<>();
+      for (Inode child : currentInode.childs)
+      {
+         RecyclerViewHandler.InodeModel model = new RecyclerViewHandler.InodeModel();
+         model.inodeName = child.name;
+         model.inodeIcon = ResourcesCompat.getDrawable(parentActivity.getResources(), R.drawable.default_icon_for_directory, null);
+         model.inodePath = child.path;
+         newInodeData.add(model);
+      }
+   }
+
+   private void highlightFileIcon(ImageView ivFileIcon)
+   {
+      ivFileIcon.setColorFilter(theme.clickedIconColor);
+      lastHighlightedFileIcon = ivFileIcon;
+   }
+
+   private void resetHighlightedFileIcons(ImageView highlightedFileIcon)
+   {
+      if (highlightedFileIcon != null)
+      {
+         highlightedFileIcon.setColorFilter(theme.iconColor);
+      }
+   }
+
    public static class Theme
    {
       private static final Theme DEFAULT;
@@ -87,11 +144,13 @@ public class FolderBrowser
          DEFAULT.name = "Ocean";
          DEFAULT.folderColor = R.color.ocean_blue_foreground;
          DEFAULT.iconColor = R.color.ocean_white_foreground;
+         DEFAULT.clickedIconColor = R.color.ocean_gray_foreground;
          DEFAULT.backgroundColor = R.color.ocean_blue_background;
       }
 
       private int folderColor = DEFAULT.folderColor;
-      private int iconColor = DEFAULT.iconColor;;
+      private int iconColor = DEFAULT.iconColor;
+      private int clickedIconColor = DEFAULT.clickedIconColor;
       private int backgroundColor = DEFAULT.backgroundColor;
       private String name = DEFAULT.name;
 
@@ -271,7 +330,8 @@ public class FolderBrowser
       private static final int ITEM = R.layout.folder_browser_item;
       private static final int TEXT_VIEW_FOR_INODE_NAME = R.id.text_view_for_inode_name;
       private static final int IMAGE_VIEW_FOR_INODE_ICON = R.id.image_view_for_inode_icon;
-      private static final int TEXT_VIEW_FOR_CURRENT_PATH = R.id.text_view_for_current_path;
+      private static final int TEXT_VIEW_FOR_INODE_PATH = R.id.text_view_for_inode_path;
+      private static final int TEXT_VIEW_FOR_DIRECTORY_PATH = R.id.text_view_for_directory_path;
       private static final int DEFAULT_ICON_FOR_FILE = R.drawable.default_icon_for_file;
       private static final int DEFAULT_ICON_FOR_DIRECTORY = R.drawable.default_icon_for_directory;
 
@@ -302,7 +362,7 @@ public class FolderBrowser
       }
    }
 
-   private class RecyclerViewHandler
+   private static class RecyclerViewHandler
    {
       RecyclerView recyclerView;
       Adapter adapter;
@@ -315,18 +375,20 @@ public class FolderBrowser
          this.recyclerViewData = recyclerViewData;
       }
 
-      class InodeModel
+      static class InodeModel
       {
          String inodeName;
          Drawable inodeIcon;
+         String inodePath;
       }
 
       private class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>
       {
          @Override public void onBindViewHolder(Adapter.ViewHolder viewHolder, int position)
          {
-            viewHolder.textView.setText(inodeData.get(position).inodeName);
-            viewHolder.imageView.setImageDrawable(inodeData.get(position).inodeIcon);
+            viewHolder.textViewInodeName.setText(inodeData.get(position).inodeName);
+            viewHolder.imageViewInodeIcon.setImageDrawable(inodeData.get(position).inodeIcon);
+            viewHolder.textViewInodePath.setText(inodeData.get(position).inodePath);
          }
 
          @Override public Adapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
@@ -344,8 +406,9 @@ public class FolderBrowser
 
          class ViewHolder extends RecyclerView.ViewHolder
          {
-            TextView textView;
-            ImageView imageView;
+            TextView textViewInodeName;
+            ImageView imageViewInodeIcon;
+            TextView textViewInodePath;
 
             ViewHolder(View itemView)
             {
@@ -353,16 +416,22 @@ public class FolderBrowser
 
                boolean logging = true;
 
-               textView = itemView.findViewById(RecyclerViewData.TEXT_VIEW_FOR_INODE_NAME);
-               if (!DEBUG.checkView(textView, RecyclerViewData.TEXT_VIEW_FOR_INODE_NAME, logging))
+               textViewInodeName = itemView.findViewById(RecyclerViewData.TEXT_VIEW_FOR_INODE_NAME);
+               if (!DEBUG.checkView(textViewInodeName, RecyclerViewData.TEXT_VIEW_FOR_INODE_NAME, logging))
                {
-                  DEBUG.throwError("textView is null");
+                  DEBUG.throwError("textViewInodeName is null");
                }
 
-               imageView = itemView.findViewById(RecyclerViewData.IMAGE_VIEW_FOR_INODE_ICON);
-               if (!DEBUG.checkView(imageView, RecyclerViewData.IMAGE_VIEW_FOR_INODE_ICON, logging))
+               imageViewInodeIcon = itemView.findViewById(RecyclerViewData.IMAGE_VIEW_FOR_INODE_ICON);
+               if (!DEBUG.checkView(imageViewInodeIcon, RecyclerViewData.IMAGE_VIEW_FOR_INODE_ICON, logging))
                {
-                  DEBUG.throwError("imageView is null");
+                  DEBUG.throwError("imageViewInodeIcon is null");
+               }
+
+                textViewInodePath = itemView.findViewById(RecyclerViewData.TEXT_VIEW_FOR_INODE_PATH);
+               if (!DEBUG.checkView(textViewInodePath, RecyclerViewData.TEXT_VIEW_FOR_INODE_PATH, logging))
+               {
+                  DEBUG.throwError("textViewInodePath is null");
                }
             }
          }

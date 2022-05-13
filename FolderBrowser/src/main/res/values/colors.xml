@@ -2,5 +2,6 @@
 <resources>
     <color name="ocean_blue_background">#011A25</color>
     <color name="ocean_blue_foreground">#2F9DBE</color>
+    <color name="ocean_gray_foreground">#8C9A9F</color>
     <color name="ocean_white_foreground">#C6E7F1</color>
 </resources>

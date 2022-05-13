@@ -17,7 +17,7 @@
         android:layout_centerHorizontal="true"/>
 
     <TextView
-        android:id="@+id/text_view_for_current_path"
+        android:id="@+id/text_view_for_directory_path"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="/home"
