@@ -94,7 +94,7 @@ public class FolderBrowser
       View folderBrowserView = LayoutInflater.from(parentActivity)
          .inflate(R.layout.folder_browser_layout, container, false);
 
-      new Handler().post(()->container.addView(folderBrowserView));
+      container.addView(folderBrowserView);
       changeDirectoryTo(rootInode.path);
    }
 
