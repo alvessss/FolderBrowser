@@ -89,6 +89,11 @@ public class FolderBrowser
 
    }
 
+   public void setRootInode(String path)
+   {
+      rootInode = Inode.getInode(path, false);
+   }
+
    public void startSearch(Inode choosenInode)
    {
       View folderBrowserView = LayoutInflater.from(parentActivity)
