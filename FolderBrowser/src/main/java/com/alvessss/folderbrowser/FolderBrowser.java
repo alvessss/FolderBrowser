@@ -76,7 +76,7 @@ public class FolderBrowser
         DEBUG.throwError("Set properly the RecyclerViewData! Bye.");
      }
 
-      recyclerViewHandler = new RecyclerViewHandler(recyclerViewData);
+      recyclerViewHandler = new RecyclerViewHandler(activity, recyclerViewData);
 
      if (supportedFiles == null)
      {
@@ -454,9 +454,12 @@ public class FolderBrowser
 
       final RecyclerViewData recyclerViewData;
 
-      RecyclerViewHandler(@NonNull final RecyclerViewData recyclerViewData)
+      RecyclerViewHandler(@NonNull AppCompatActivity activity, @NonNull final RecyclerViewData recyclerViewData)
       {
          this.recyclerViewData = recyclerViewData;
+         adapter = new Adapter();
+         recyclerView = activity.findViewById(recyclerViewData.ID);
+         recyclerView.setAdapter(adapter);
       }
 
       class InodeModel
