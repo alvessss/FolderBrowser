@@ -100,7 +100,7 @@ public class FolderBrowser
 
       container.addView(folderBrowserView);
 
-      RecyclerView recyclerView = container.findViewById(recyclerViewHandler.recyclerViewData.ID);
+      RecyclerView recyclerView = folderBrowserView.findViewById(recyclerViewHandler.recyclerViewData.ID);
 
       recyclerView.setAdapter(recyclerViewHandler.new Adapter());
 
