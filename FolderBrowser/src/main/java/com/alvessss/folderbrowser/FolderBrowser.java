@@ -150,7 +150,6 @@ public class FolderBrowser
             {
                model.inodeIcon = ResourcesCompat.getDrawable(parentActivity.getResources(), RecyclerViewData.DEFAULT_ICON_FOR_DIRECTORY, null);
             }
-
          }
 
          Log.i(DEBUG.TAG, child.name);
