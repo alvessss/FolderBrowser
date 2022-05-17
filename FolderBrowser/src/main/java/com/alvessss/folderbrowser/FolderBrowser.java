@@ -153,6 +153,7 @@ public class FolderBrowser
 
          }
 
+         Log.i(DEBUG.TAG, child.name);
          model.inodeName = child.name;
          model.inodePath = child.path;
          model.type = child.type;
