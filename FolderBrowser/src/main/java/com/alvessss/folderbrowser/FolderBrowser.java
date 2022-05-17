@@ -429,7 +429,6 @@ public class FolderBrowser
       private int columns = COLUMNS;
       private int fileIcon = DEFAULT_ICON_FOR_FILE;
       private int directoryIcon = DEFAULT_ICON_FOR_DIRECTORY;
-      private int rootView = UNDEFINED;
 
       public void setColumns(int n)
       {
@@ -446,16 +445,10 @@ public class FolderBrowser
          directoryIcon = resourceId;
       }
 
-      public void setRootView(int resourceId)
-      {
-         rootView = resourceId;
-      }
-
       private boolean checkFields()
       {
          return DEBUG.checkId(fileIcon) &&
             DEBUG.checkId(directoryIcon) &&
-            DEBUG.checkId(rootView) &&
             columns >= 1;
       }
    }
