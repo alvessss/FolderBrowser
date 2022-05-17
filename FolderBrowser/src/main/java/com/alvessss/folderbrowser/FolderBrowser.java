@@ -102,7 +102,7 @@ public class FolderBrowser
 
       RecyclerView recyclerView = folderBrowserView.findViewById(recyclerViewHandler.recyclerViewData.ID);
 
-      recyclerView.setAdapter(recyclerViewHandler.new Adapter());
+      recyclerView.setAdapter(recyclerViewHandler.adapter);
 
       changeDirectoryTo(rootInode.path);
    }
@@ -456,7 +456,7 @@ public class FolderBrowser
       // TODO: Inflate the RecyclerView's layout and add it to activity before call findviewbyid();
 
       RecyclerView recyclerView;
-      Adapter adapter;
+      Adapter adapter = new Adapter();
       ArrayList<InodeModel> inodeData = new ArrayList<>();
 
       final RecyclerViewData recyclerViewData;
@@ -464,7 +464,6 @@ public class FolderBrowser
       RecyclerViewHandler(@NonNull AppCompatActivity activity, @NonNull final RecyclerViewData recyclerViewData)
       {
          this.recyclerViewData = recyclerViewData;
-         adapter = new Adapter();
       }
 
       class InodeModel
