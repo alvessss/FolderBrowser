@@ -134,7 +134,7 @@ public class FolderBrowser
       for (Inode child : currentInode.childs)
       {
          model = recyclerViewHandler.new InodeModel();
-         fileSupport = FileSupport.classify(supportedFiles, currentInode.name);
+         fileSupport = FileSupport.classify(supportedFiles, child.name);
 
          if (fileSupport != null)
          {
