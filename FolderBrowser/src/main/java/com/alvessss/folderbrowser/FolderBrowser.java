@@ -16,11 +16,11 @@ import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.graphics.drawable.Drawable;
 
-// TODO: set RecyclerView callbacks
-
 @SuppressWarnings("all")
 public class FolderBrowser
 {
+   private static final int LAYOUT_ID = R.layout.folder_browser_layout;
+
    private final ViewGroup container;
    private final AppCompatActivity parentActivity;
    private final FileSupport[] supportedFiles;
@@ -96,9 +96,16 @@ public class FolderBrowser
    public void startSearch(Inode choosenInode)
    {
       View folderBrowserView = LayoutInflater.from(parentActivity)
-         .inflate(R.layout.folder_browser_layout, container, false);
+         .inflate(FolderBrowser.LAYOUT_ID, container, false);
 
       container.addView(folderBrowserView);
+
+      RecyclerView recyclerView = container.findViewById(recyclerViewHandler.recyclerViewData.ID);
+
+      recyclerView.setAdapter(recyclerViewHandler.new Adapter());
+
+      ((ViewGroup) folderBrowserView).addView(recyclerView);
+
       changeDirectoryTo(rootInode.path);
    }
 
@@ -408,6 +415,7 @@ public class FolderBrowser
 
    public static class RecyclerViewData
    {
+      private static final int UNDEFINED = 0;
       private static final int COLUMNS = 4;
       private static final int ID = R.id.recycler_view_for_directory_content;
       private static final int ITEM = R.layout.folder_browser_item;
@@ -421,32 +429,41 @@ public class FolderBrowser
       private int columns = COLUMNS;
       private int fileIcon = DEFAULT_ICON_FOR_FILE;
       private int directoryIcon = DEFAULT_ICON_FOR_DIRECTORY;
+      private int rootView = UNDEFINED;
 
-      public void setColumns(int columns)
+      public void setColumns(int n)
       {
-         this.columns = columns;
+         columns = n;
       }
 
       public void setFileIcon(int resourceId)
       {
-         this.fileIcon = resourceId;
+         fileIcon = resourceId;
       }
 
       public void setDirectoryIcon(int resourceId)
       {
-         this.directoryIcon = resourceId;
+         directoryIcon = resourceId;
+      }
+
+      public void setRootView(int resourceId)
+      {
+         rootView = resourceId;
       }
 
       private boolean checkFields()
       {
          return DEBUG.checkId(fileIcon) &&
             DEBUG.checkId(directoryIcon) &&
+            DEBUG.checkId(rootView) &&
             columns >= 1;
       }
    }
 
    private class RecyclerViewHandler
    {
+      // TODO: Inflate the RecyclerView's layout and add it to activity before call findviewbyid();
+
       RecyclerView recyclerView;
       Adapter adapter;
       ArrayList<InodeModel> inodeData = new ArrayList<>();
@@ -457,8 +474,6 @@ public class FolderBrowser
       {
          this.recyclerViewData = recyclerViewData;
          adapter = new Adapter();
-         recyclerView = activity.findViewById(RecyclerViewData.ID);
-         recyclerView.setAdapter(adapter);
       }
 
       class InodeModel
