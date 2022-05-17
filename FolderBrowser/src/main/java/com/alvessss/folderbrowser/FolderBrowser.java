@@ -104,8 +104,6 @@ public class FolderBrowser
 
       recyclerView.setAdapter(recyclerViewHandler.new Adapter());
 
-      ((ViewGroup) folderBrowserView).addView(recyclerView);
-
       changeDirectoryTo(rootInode.path);
    }
 
