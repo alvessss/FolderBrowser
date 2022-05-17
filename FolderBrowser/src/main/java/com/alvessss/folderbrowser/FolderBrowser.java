@@ -126,7 +126,7 @@ public class FolderBrowser
 
    private void changeDirectoryTo(String newDirectory)
    {
-      currentInode = Inode.getInode(newDirectory, false);
+      currentInode = Inode.getInode(newDirectory, true);
       ArrayList<RecyclerViewHandler.InodeModel> newInodeData = new ArrayList<>();
       RecyclerViewHandler.InodeModel model;
       FileSupport fileSupport;
