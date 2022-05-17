@@ -142,7 +142,7 @@ public class FolderBrowser
          }
          else
          {
-            if (child.isFile())
+            if (child.isFile() )
             {
                model.inodeIcon = ResourcesCompat.getDrawable(parentActivity.getResources(), RecyclerViewData.DEFAULT_ICON_FOR_FILE, null);
             }
