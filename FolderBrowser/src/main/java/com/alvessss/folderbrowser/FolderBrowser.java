@@ -3,7 +3,6 @@ package com.alvessss.folderbrowser;
 import java.io.File;
 import java.util.ArrayList;
 
-import android.os.Handler;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -458,7 +457,7 @@ public class FolderBrowser
       {
          this.recyclerViewData = recyclerViewData;
          adapter = new Adapter();
-         recyclerView = activity.findViewById(recyclerViewData.ID);
+         recyclerView = activity.findViewById(RecyclerViewData.ID);
          recyclerView.setAdapter(adapter);
       }
 
