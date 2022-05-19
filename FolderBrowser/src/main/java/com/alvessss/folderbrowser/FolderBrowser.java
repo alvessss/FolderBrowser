@@ -19,6 +19,11 @@ import android.graphics.drawable.Drawable;
 @SuppressWarnings("all")
 public class FolderBrowser
 {
+   // TODO 1: Apply clean code;
+   // TODO 2: Make the icon's sizes be dynnamic according with the size of its container;
+   // TODO 3: Implement the navigation through directories;
+   // TODO 4: Apply tests;
+
    private static final int LAYOUT_ID = R.layout.folder_browser_layout;
 
    private final ViewGroup container;
