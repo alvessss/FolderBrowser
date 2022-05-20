@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.view.View;
@@ -26,6 +27,7 @@ public class FolderBrowser
    // TODO 4: Apply tests;
 
    private static final int LAYOUT = R.layout.folder_browser_layout;
+   private static final int RETURN_BUTTON = R.id.button_view_for_previous_directory;
 
    private final ViewGroup parentContainer;
    private final AppCompatActivity parentActivity;
@@ -40,6 +42,8 @@ public class FolderBrowser
    private Inode previousInode = rootInode;
 
    private Theme theme;
+
+   private final Button returnButton;
 
    private final View.OnClickListener onClickFolder =
       new View.OnClickListener()
@@ -101,6 +105,9 @@ public class FolderBrowser
      {
         this.supportedFiles = supportedFiles;
      }
+
+     returnButton = activity.findViewById(RETURN_BUTTON);
+     returnButton.setOnClickListener(onClickReturn);
 
    }
 
