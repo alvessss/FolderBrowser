@@ -43,7 +43,7 @@ public class FolderBrowser
 
    private Theme theme;
 
-   private final Button returnButton;
+   private  Button returnButton;
 
    private final View.OnClickListener onClickFolder =
       new View.OnClickListener()
@@ -106,9 +106,6 @@ public class FolderBrowser
         this.supportedFiles = supportedFiles;
      }
 
-     returnButton = activity.findViewById(RETURN_BUTTON);
-     returnButton.setOnClickListener(onClickReturn);
-
    }
 
    public void setRootInode(String path)
@@ -124,6 +121,9 @@ public class FolderBrowser
       parentContainer.addView(folderBrowserView);
 
       RecyclerView recyclerView = folderBrowserView.findViewById(recyclerViewHandler.recyclerViewData.ID);
+
+      returnButton = folderBrowserView.findViewById(RETURN_BUTTON);
+      returnButton.setOnClickListener(onClickReturn);
 
       recyclerView.setAdapter(recyclerViewHandler.adapter);
 
