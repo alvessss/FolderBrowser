@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.graphics.drawable.Drawable;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 @SuppressWarnings("all")
 public class FolderBrowser
 {
@@ -43,7 +45,7 @@ public class FolderBrowser
 
    private Theme theme;
 
-   private  Button returnButton;
+   private FloatingActionButton returnButton;
 
    private final View.OnClickListener onClickFolder =
       new View.OnClickListener()
