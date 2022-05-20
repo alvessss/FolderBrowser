@@ -122,7 +122,7 @@ public class FolderBrowser
 
       RecyclerView recyclerView = folderBrowserView.findViewById(recyclerViewHandler.recyclerViewData.ID);
 
-      returnButton = folderBrowserView.findViewById(RETURN_BUTTON);
+      returnButton = parentContainer.findViewById(RETURN_BUTTON);
       returnButton.setOnClickListener(onClickReturn);
 
       recyclerView.setAdapter(recyclerViewHandler.adapter);
