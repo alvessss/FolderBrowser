@@ -3,6 +3,7 @@ package com.alvessss.folderbrowser;
 import java.io.File;
 import java.util.ArrayList;
 
+import android.os.Environment;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,21 +21,23 @@ import android.graphics.drawable.Drawable;
 public class FolderBrowser
 {
    // TODO 1: Apply clean code;
-   // TODO 2: Make the icon's sizes be dynnamic according with the size of its container;
+   // TODO 2: Make the icon's sizes be dynnamic according with the size of its parentContainer;
    // TODO 3: Implement the navigation through directories;
    // TODO 4: Apply tests;
 
-   private static final int LAYOUT_ID = R.layout.folder_browser_layout;
+   private static final int LAYOUT = R.layout.folder_browser_layout;
 
-   private final ViewGroup container;
+   private final ViewGroup parentContainer;
    private final AppCompatActivity parentActivity;
+
    private final FileSupport[] supportedFiles;
    private final RecyclerViewHandler recyclerViewHandler;
 
-   private Inode rootInode;
-   private Inode currentInode;
-
-   private ImageView lastHighlightedFileIcon;
+   private Inode rootInode = Inode.getInode(
+      Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath(), true
+   );
+   private Inode currentInode = rootInode;
+   private Inode previousInode = rootInode;
 
    private Theme theme;
 
@@ -46,9 +49,10 @@ public class FolderBrowser
          {
             TextView tvFolderPath = view.findViewById(RecyclerViewData.TEXT_VIEW_FOR_INODE_PATH);
             String folderPath = tvFolderPath.getText().toString();
+            previousInode = currentInode;
             changeDirectoryTo(folderPath);
          }
-   };
+      };
 
    private final View.OnClickListener onClickFile =
       new View.OnClickListener()
@@ -56,21 +60,28 @@ public class FolderBrowser
          @Override
          public void onClick(View view)
          {
-            resetHighlightedFileIcons(lastHighlightedFileIcon);
             TextView tvFilePath = view.findViewById(RecyclerViewData.TEXT_VIEW_FOR_INODE_PATH);
             String filePath = tvFilePath.getText().toString();
             ImageView iconFile = view.findViewById(RecyclerViewData.IMAGE_VIEW_FOR_INODE_ICON);
-            highlightFileIcon(iconFile);
          }
-   };
+      };
+
+   private final View.OnClickListener onClickReturn =
+      new View.OnClickListener() {
+         @Override
+         public void onClick(View view)
+         {
+            changeDirectoryTo(previousInode.path);
+         }
+      };
 
    public FolderBrowser(
-      @NonNull final ViewGroup container,
+      @NonNull final ViewGroup parentContainer,
       @NonNull final AppCompatActivity activity,
       @NonNull final RecyclerViewData recyclerViewData,
       final FileSupport[] supportedFiles)
    {
-     this.container = container;
+     this.parentContainer = parentContainer;
      parentActivity = activity;
 
      if (!recyclerViewData.checkFields())
@@ -101,9 +112,9 @@ public class FolderBrowser
    public void startSearch(Inode choosenInode)
    {
       View folderBrowserView = LayoutInflater.from(parentActivity)
-         .inflate(FolderBrowser.LAYOUT_ID, container, false);
+         .inflate(FolderBrowser.LAYOUT, parentContainer, false);
 
-      container.addView(folderBrowserView);
+      parentContainer.addView(folderBrowserView);
 
       RecyclerView recyclerView = folderBrowserView.findViewById(recyclerViewHandler.recyclerViewData.ID);
 
@@ -167,20 +178,6 @@ public class FolderBrowser
       assert recyclerViewHandler != null;
       recyclerViewHandler.inodeData = newInodeData;
       recyclerViewHandler.adapter.notifyDataSetChanged();
-   }
-
-   private void highlightFileIcon(ImageView ivFileIcon)
-   {
-      ivFileIcon.setColorFilter(theme.clickedIconColor);
-      lastHighlightedFileIcon = ivFileIcon;
-   }
-
-   private void resetHighlightedFileIcons(ImageView highlightedFileIcon)
-   {
-      if (highlightedFileIcon != null)
-      {
-         highlightedFileIcon.setColorFilter(theme.iconColor);
-      }
    }
 
    public static class FileSupport
@@ -323,6 +320,7 @@ public class FolderBrowser
          }
          else
          {
+            // TODO: This should list the inodes of the current directory instead of assign a empty array!
             inode.childs = new Inode[0];
          }
 
