@@ -323,7 +323,10 @@ public class FolderBrowser
          inode.name = file.getName();
          inode.path = file.getAbsolutePath();
          inode.type = file.isFile() ? Type.FILE : Type.DIRECTORY;
-         inode.parent = Inode.getInode(file.getParentFile().getAbsolutePath(), false);
+         if (file.getParentFile() != null)
+         {
+            inode.parent = Inode.getInode(file.getParentFile().getAbsolutePath(), false);
+         }
          if (recursive)
          {
             inode.childs = getInodeTree(inode.path);
