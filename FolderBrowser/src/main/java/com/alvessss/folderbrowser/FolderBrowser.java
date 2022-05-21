@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.view.View;
@@ -77,7 +76,7 @@ public class FolderBrowser
          @Override
          public void onClick(View view)
          {
-            changeDirectoryTo(previousInode.path);
+            changeDirectoryTo(currentInode.parent.path);
          }
       };
 
@@ -301,6 +300,7 @@ public class FolderBrowser
       private String path;
       private String name;
       private Type type;
+      private Inode parent;
       private Inode[] childs;
 
       private Inode()
@@ -323,6 +323,7 @@ public class FolderBrowser
          inode.name = file.getName();
          inode.path = file.getAbsolutePath();
          inode.type = file.isFile() ? Type.FILE : Type.DIRECTORY;
+         inode.parent = Inode.getInode(file.getParentFile().getAbsolutePath(), false);
          if (recursive)
          {
             inode.childs = getInodeTree(inode.path);
