@@ -81,7 +81,7 @@ public class Inode
 
       int i = 0;
       for (File child : sourceChilds) {
-         Inode inodeChild = childs[i] = new Inode();
+         Inode inodeChild = childs[i++] = new Inode();
          inodeChild.name = child.getName();
          inodeChild.path = child.getAbsolutePath();
          inodeChild.type = child.isFile() ? Type.FILE : Type.DIRECTORY;
