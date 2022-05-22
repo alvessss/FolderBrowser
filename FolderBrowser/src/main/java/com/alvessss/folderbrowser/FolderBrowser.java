@@ -231,7 +231,6 @@ public class FolderBrowser
 
          return filePath.substring(strLength + 1).toLowerCase();
       }
-
    }
 
    public static class Theme
