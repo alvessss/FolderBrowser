@@ -20,8 +20,7 @@ import java.util.ArrayList;
  */
 
 @SuppressWarnings("all")
-public class Inode
-{
+public class Inode {
    private String path;
    private String name;
    private String parent;
@@ -107,42 +106,34 @@ public class Inode
     * @param ptr The ArrayList to put the paths.
     * @param inodeTree the Inode to extract the paths.
     */
-   public static void extractPathsFromInodeTree(ArrayList<String> ptr, Inode inodeTree)
-   {
-      for (Inode inode : inodeTree.childs)
-      {
+   public static void extractPathsFromInodeTree(ArrayList<String> ptr, Inode inodeTree) {
+      for (Inode inode : inodeTree.childs) {
          ptr.add(inode.path);
          extractPathsFromInodeTree(ptr, inode);
       }
    }
 
-   public String getName()
-   {
+   public String getName() {
       return name;
    }
 
-   public String getPath()
-   {
+   public String getPath() {
       return path;
    }
 
-   public Type getType()
-   {
+   public Type getType() {
       return type;
    }
 
-   public Inode[] getChilds()
-   {
+   public Inode[] getChilds() {
       return childs;
    }
 
-   public boolean isFile()
-   {
+   public boolean isFile() {
       return type == Type.FILE;
    }
 
-   public boolean isDirectory()
-   {
+   public boolean isDirectory() {
       return type == Type.DIRECTORY;
    }
 
@@ -150,14 +141,12 @@ public class Inode
       return parent;
    }
 
-   public static enum Type
-   {
+   public static enum Type  {
       FILE(0),
       DIRECTORY(1);
 
       int val;
-      Type(int value)
-      {
+      Type(int value) {
          val = value;
       }
    }
