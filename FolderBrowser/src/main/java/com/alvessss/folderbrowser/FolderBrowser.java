@@ -1,6 +1,5 @@
 package com.alvessss.folderbrowser;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import android.os.Environment;
@@ -76,7 +75,7 @@ public class FolderBrowser
          @Override
          public void onClick(View view)
          {
-            changeDirectoryTo(currentInode.parent.path);
+            changeDirectoryTo(currentInode.getParent());
          }
       };
 
@@ -128,7 +127,7 @@ public class FolderBrowser
 
       recyclerView.setAdapter(recyclerViewHandler.adapter);
 
-      changeDirectoryTo(rootInode.path);
+      changeDirectoryTo(rootInode.getPath());
    }
 
    public void setTheme(Theme theme)
@@ -155,10 +154,10 @@ public class FolderBrowser
       RecyclerViewHandler.InodeModel model;
       FileSupport fileSupport;
 
-      for (Inode child : currentInode.childs)
+      for (Inode child : currentInode.getChilds())
       {
          model = recyclerViewHandler.new InodeModel();
-         fileSupport = FileSupport.classify(supportedFiles, child.name);
+         fileSupport = FileSupport.classify(supportedFiles, child.getName());
 
          if (fileSupport != null)
          {
@@ -176,10 +175,10 @@ public class FolderBrowser
             }
          }
 
-         Log.i(DEBUG.TAG, child.name);
-         model.inodeName = child.name;
-         model.inodePath = child.path;
-         model.type = child.type;
+         Log.i(DEBUG.TAG, child.getName());
+         model.inodeName = child.getName();
+         model.inodePath = child.getPath();
+         model.type = child.getType();
          newInodeData.add(model);
       }
 
@@ -278,152 +277,6 @@ public class FolderBrowser
             DEBUG.checkId(iconColor) &&
             DEBUG.checkId(backgroundColor) &&
             name != null;
-      }
-   }
-
-   /**
-    * A Inode abstracts a amount of real data in the disk to
-    * a simple structure containing, basically, a name, a path,
-    * a type (File or Directory), and its data (obviously). If
-    * a inode is Directory-Type, its data is the paths of its childs.
-    *
-    * Our Inode is even simple than that, it have no data. If the inode is
-    * a File the field Childs must be a array with length 0, if is a Directory,
-    * Childs must be a array of the child inodes.
-    *
-    * "Why it have no data?" > Because you could easily retrieve its data with
-    * the java.io.File library passing the Inode.path to it.
-    */
-   public static class Inode
-   {
-      private String path;
-      private String name;
-      private Type type;
-      private Inode parent;
-      private Inode[] childs;
-
-      private Inode()
-      {
-         ;
-      }
-
-      /**
-       * Return a inode getted by the inodePath.
-       * @param inodePath The path of the inode in the filesystem.
-       * @param recursive If true, get all the child inodes.
-       * @return A Inode Object, or null if the inodePath cannot be resolved.
-       */
-      public static Inode getInode(String inodePath, boolean recursive)
-      {
-         File file = new File(inodePath);
-         if (file == null) return  null;
-
-         Inode inode = new Inode();
-         inode.name = file.getName();
-         inode.path = file.getAbsolutePath();
-         inode.type = file.isFile() ? Type.FILE : Type.DIRECTORY;
-         if (file.getParentFile() != null)
-         {
-            inode.parent = Inode.getInode(file.getParentFile().getAbsolutePath(), false);
-         }
-         if (recursive)
-         {
-            inode.childs = getInodeTree(inode.path);
-         }
-         else
-         {
-            // TODO: This should list the inodes of the current directory instead of assign a empty array!
-            inode.childs = new Inode[0];
-         }
-
-         return inode;
-      }
-
-      /**
-       * Get all the childs from a specific inode root.
-       * @param inodePath the path of the root inode.
-       * @return A array of inodes getted from the root inode, or null if the
-       * root inode does not have childs or does not exists.
-       */
-      public static Inode[] getInodeTree(String inodePath)
-      {
-         File root = new File(inodePath);
-         if (root == null) return new Inode[0];
-
-         File[] childs = root.listFiles();
-         if (childs == null) return new Inode[0];
-
-         Inode[] tree = new Inode[childs.length];
-         int index = 0;
-         for (File child : childs)
-         {
-            Inode inode = new Inode();
-            inode.name = child.getName();
-            inode.path = child.getAbsolutePath();
-            inode.type = child.isFile() ? Type.FILE : Type.DIRECTORY;
-            inode.childs = getInodeTree(inode.path);
-            tree[index++] = inode;
-         }
-
-         return tree;
-      }
-
-      /**
-       * Extract only the path field of a Inode and pass it
-       * to the ArrayList pointer. If the Inode have childs,
-       * get the path of all of them.
-       * @param ptr The ArrayList to put the paths.
-       * @param inodeTree the Inode to extract the paths.
-       */
-      public static void extractPathsFromInodeTree(ArrayList<String> ptr, Inode inodeTree)
-      {
-         for (Inode inode : inodeTree.childs)
-         {
-            ptr.add(inode.path);
-            extractPathsFromInodeTree(ptr, inode);
-         }
-      }
-
-      public String getName()
-      {
-         return name;
-      }
-
-      public String getPath()
-      {
-         return path;
-      }
-
-      public Type getType()
-      {
-         return type;
-      }
-
-      public Inode[] getChilds()
-      {
-         return childs;
-      }
-
-      public boolean isFile()
-      {
-         return type == Type.FILE;
-      }
-
-      public boolean isDirectory()
-      {
-         return type == Type.DIRECTORY;
-      }
-
-      public static enum Type
-      {
-         FILE(0),
-         DIRECTORY(1);
-
-         int val;
-         Type(int value)
-         {
-            val = value;
-         }
       }
    }
 
