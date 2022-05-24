@@ -28,12 +28,27 @@ public class FolderBrowser {
       }
    }
 
-   public boolean init() {
-      // TODO: set layout;
-      // TODO: set recycler view;
-      // TODO: set initial theme;
-      // TODO: set initial state;
-      return true;
+   public void init() {
+      setLayout();
+      setRecyclerView();
+      setInitialTheme();
+      setInitialDirectory();
+   }
+
+   private void setLayout() {
+      ;
+   }
+
+   private void setRecyclerView() {
+      ;
+   }
+
+   private void setInitialTheme() {
+      ;
+   }
+
+   private void setInitialDirectory() {
+      ;
    }
 
    /* private constructor */
