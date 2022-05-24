@@ -22,6 +22,19 @@ public class FolderBrowser {
       // for Builder class
    }
 
+   public static FolderBrowser build(FolderBrowser.Builder builder) {
+      FolderBrowser builtInstance = builder.instance;
+      String buildingValidationStatus = Builder.validate(builtInstance);
+      if (Objects.equals(buildingValidationStatus, Builder.VALIDATION_OK)) {
+         Log.v(Builder.TAG, Builder.VALIDATION_OK);
+         return builtInstance;
+      }
+
+      else {
+         throw new RuntimeException(buildingValidationStatus);
+      }
+   }
+
    public static class Builder {
       private static final String TAG = "FolderBrowser.Builder";
       private static final String VALIDATION_OK = "ALL FIELDS ALRIGHT :)";
@@ -44,19 +57,6 @@ public class FolderBrowser {
          }
 
          return Builder.VALIDATION_OK;
-      }
-
-      private static FolderBrowser build(FolderBrowser.Builder builder) {
-         FolderBrowser builtInstance = builder.instance;
-         String buildingValidationStatus = Builder.validate(builtInstance);
-         if (Objects.equals(buildingValidationStatus, Builder.VALIDATION_OK)) {
-            Log.v(Builder.TAG, Builder.VALIDATION_OK);
-            return builtInstance;
-         }
-
-         else {
-            throw new RuntimeException(buildingValidationStatus);
-         }
       }
    }
 

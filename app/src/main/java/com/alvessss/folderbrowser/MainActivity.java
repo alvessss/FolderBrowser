@@ -14,5 +14,10 @@ public class MainActivity extends AppCompatActivity {
    protected void onStart() {
       super.onStart();
 
+
+      FolderBrowser folderBrowser = FolderBrowser.build(
+         new FolderBrowser.Builder(this)
+      );
+
    }
 } 
