@@ -1,7 +1,5 @@
 package com.alvessss.folderbrowser;
 
-// TODO: RecyclerView class
-
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
@@ -16,12 +14,7 @@ public class FolderBrowser {
    private Context context;
    private AppCompatActivity appCompatActivity;
 
-   private FolderBrowser builtInstance;
-
-   private FolderBrowser() {
-      // for Builder class
-   }
-
+   /* constructor */
    public static FolderBrowser build(FolderBrowser.Builder builder) {
       FolderBrowser builtInstance = builder.instance;
       String buildingValidationStatus = Builder.validate(builtInstance);
@@ -33,6 +26,19 @@ public class FolderBrowser {
       else {
          throw new RuntimeException(buildingValidationStatus);
       }
+   }
+
+   public boolean init() {
+      // TODO: set layout;
+      // TODO: set recycler view;
+      // TODO: set initial theme;
+      // TODO: set initial state;
+      return true;
+   }
+
+   /* private constructor */
+   private FolderBrowser() {
+      //
    }
 
    public static class Builder {

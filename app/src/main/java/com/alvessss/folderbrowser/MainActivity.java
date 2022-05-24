@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 public class MainActivity extends AppCompatActivity {
+   private FolderBrowser folderBrowser;
+
    @Override
    protected void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
@@ -14,10 +16,9 @@ public class MainActivity extends AppCompatActivity {
    protected void onStart() {
       super.onStart();
 
+      FolderBrowser.Builder folderBrowserBuilder = new FolderBrowser.Builder(this);
 
-      FolderBrowser folderBrowser = FolderBrowser.build(
-         new FolderBrowser.Builder(this)
-      );
+      folderBrowser = FolderBrowser.build(folderBrowserBuilder);
 
    }
 } 
