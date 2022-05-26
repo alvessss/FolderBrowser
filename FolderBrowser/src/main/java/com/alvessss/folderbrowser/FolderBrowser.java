@@ -16,8 +16,10 @@ public class FolderBrowser {
 
    /* constructor */
    public static FolderBrowser build(FolderBrowser.Builder builder) {
-      FolderBrowser builtInstance = builder.instance;
+      FolderBrowser builtInstance = builder.getInstance();
+
       String buildingValidationStatus = Builder.validate(builtInstance);
+
       if (Objects.equals(buildingValidationStatus, Builder.VALIDATION_OK)) {
          Log.v(Builder.TAG, Builder.VALIDATION_OK);
          return builtInstance;
@@ -69,15 +71,21 @@ public class FolderBrowser {
       }
 
       public static String validate(FolderBrowser folderBrowser) {
-         if (folderBrowser.context == null)
+         if (folderBrowser.context == null) {
             return "The Context of the calling activity cannot be null!";
+         }
 
          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (!folderBrowser.context.isUiContext())
+            if (!folderBrowser.context.isUiContext()) {
                return "The Context of the calling activity must be the UI Context!";
+            }
          }
 
          return Builder.VALIDATION_OK;
+      }
+
+      private FolderBrowser getInstance() {
+         return instance;
       }
    }
 
