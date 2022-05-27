@@ -10,9 +10,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Objects;
 
 public class FolderBrowser {
+   public static final String TAG = "FolderBrowser";
+
    // from parent class
    private Context context;
    private AppCompatActivity appCompatActivity;
+
+   private Inode currentInode;
+   private Mode mode;
 
    /* constructor */
    public static FolderBrowser build(FolderBrowser.Builder builder) {
@@ -30,7 +35,40 @@ public class FolderBrowser {
       }
    }
 
-   public void init() {
+   public void start(String root) throws RuntimeException {
+      java.io.File sourceFile = new java.io.File(root);
+      if (!sourceFile.canRead()) {
+         throw new RuntimeException("Can't read from " + root);
+      }
+
+      initUi();
+      currentInode = new Inode(sourceFile);
+      mode = Mode.DIRECTORY;
+   }
+
+   private void showData(Inode sourceInode) {
+      // TODO: tests
+
+      if (mode == Mode.DIRECTORY) {
+         fillRecyclerView((Directory) sourceInode);
+      }
+
+      else if (mode == Mode.FILE) {
+         highlightFile((File) sourceInode);
+         highlightSelectButton();
+      }
+   }
+
+   private void fillRecyclerView(Directory currentDirectory) {
+   }
+
+   private void highlightFile(File currentInode) {
+   }
+
+   private void highlightSelectButton() {
+   }
+
+   private void initUi() {
       setLayout();
       setRecyclerView();
       setInitialTheme();
@@ -38,24 +76,29 @@ public class FolderBrowser {
    }
 
    private void setLayout() {
-      ;
    }
 
    private void setRecyclerView() {
-      ;
    }
 
    private void setInitialTheme() {
-      ;
    }
 
    private void setInitialDirectory() {
-      ;
    }
 
    /* private constructor */
    private FolderBrowser() {
       //
+   }
+
+   public enum Mode {
+      DIRECTORY(0), FILE(1);
+
+      public int val;
+      Mode(int val){
+         this.val = val;
+      };
    }
 
    public static class Builder {
