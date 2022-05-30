@@ -35,10 +35,12 @@ class Inode {
 
       read = sourceFile.canRead();
       Log.v(TAG, "read: " + Boolean.toString(read));
+
       write = sourceFile.canWrite();
-      Log.v(TAG, "write" + Boolean.toString(write));
+      Log.v(TAG, "write: " + Boolean.toString(write));
+
       exec = sourceFile.canExecute();
-      Log.v(TAG, "exec" + Boolean.toString(exec));
+      Log.v(TAG, "exec: " + Boolean.toString(exec));
 
    }
 

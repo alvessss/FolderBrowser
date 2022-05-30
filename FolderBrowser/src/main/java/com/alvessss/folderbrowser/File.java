@@ -1,7 +1,5 @@
 package com.alvessss.folderbrowser;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 @SuppressWarnings("all")

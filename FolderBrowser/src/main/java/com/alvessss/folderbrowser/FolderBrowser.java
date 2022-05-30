@@ -3,6 +3,7 @@ package com.alvessss.folderbrowser;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Objects;
 
 public class FolderBrowser {
+   // tag for debug
    public static final String TAG = "FolderBrowser";
 
    // from parent class
@@ -35,61 +37,23 @@ public class FolderBrowser {
       }
    }
 
-   public void start(String root) throws RuntimeException {
-      java.io.File sourceFile = new java.io.File(root);
-      if (!sourceFile.canRead()) {
-         throw new RuntimeException("Can't read from " + root);
-      }
-
-      initUi();
-      currentInode = new Inode(sourceFile);
-      mode = Mode.DIRECTORY;
+   public void start(ViewGroup parentView) {
+      // TODO
+      // recyclerViewInterface.initView();
+      // recyclerViewInterface.attachTo(parentView);
+      // directoryNavigation.setDataSource(recyclerViewInterface);
+      // directoryNavigation.setDirectory(rootDirectory);
+      // directoryNavigation.update();
    }
 
-   private void showData(Inode sourceInode) {
-      // TODO: tests
-
-      if (mode == Mode.DIRECTORY) {
-         fillRecyclerView((Directory) sourceInode);
-      }
-
-      else if (mode == Mode.FILE) {
-         highlightFile((File) sourceInode);
-         highlightSelectButton();
-      }
-   }
-
-   private void fillRecyclerView(Directory currentDirectory) {
-   }
-
-   private void highlightFile(File currentInode) {
-   }
-
-   private void highlightSelectButton() {
-   }
-
-   private void initUi() {
-      setLayout();
-      setRecyclerView();
-      setInitialTheme();
-      setInitialDirectory();
-   }
-
-   private void setLayout() {
-   }
-
-   private void setRecyclerView() {
-   }
-
-   private void setInitialTheme() {
-   }
-
-   private void setInitialDirectory() {
+   private void changeDirectory(String newDirectory) {
+      // TODO
+      // directoryNavigation.setDirectory(newDirectory);
+      // directoryNavigation.update();
    }
 
    /* private constructor */
    private FolderBrowser() {
-      //
    }
 
    public enum Mode {
