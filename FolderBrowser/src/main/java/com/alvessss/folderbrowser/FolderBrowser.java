@@ -10,11 +10,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Objects;
 
+@SuppressWarnings("all")
 public class FolderBrowser {
-   // tag for debug
+   // tag for debug.
    public static final String TAG = "FolderBrowser";
 
-   // from parent class
+   // from parent class.
    private Context context;
    private AppCompatActivity appCompatActivity;
 
