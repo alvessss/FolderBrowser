@@ -12,20 +12,20 @@ import java.util.Objects;
 
 @SuppressWarnings("all")
 public class FolderBrowser {
-   // tag for debug.
-   public static final String TAG = "FolderBrowser";
+   // Tag for debug.
+   private static final String TAG = "FolderBrowser";
 
-   // from parent class.
+   // From the calling context.
    private Context context;
    private AppCompatActivity appCompatActivity;
 
+   // Navigation logic.
    private Inode currentInode;
    private Mode mode;
 
-   /* constructor */
+   /* check and construct */
    public static FolderBrowser build(FolderBrowser.Builder builder) {
       FolderBrowser builtInstance = builder.getInstance();
-
       String buildingValidationStatus = Builder.validate(builtInstance);
 
       if (Objects.equals(buildingValidationStatus, Builder.VALIDATION_OK)) {

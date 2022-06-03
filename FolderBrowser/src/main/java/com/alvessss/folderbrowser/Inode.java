@@ -10,11 +10,12 @@ import java.io.File;
 class Inode {
    private static final String TAG = "FolderBrowser.Inode";
 
+   // Common
    private final String name;
    private final String path;
    private final String parent;
 
-   // types
+   // Types
    private final boolean file;
    private final boolean directory;
 
@@ -41,7 +42,6 @@ class Inode {
 
       exec = sourceFile.canExecute();
       Log.v(TAG, "exec: " + Boolean.toString(exec));
-
    }
 
    public String getName() {
@@ -74,6 +74,20 @@ class Inode {
 
    public boolean canExec() {
       return exec;
+   }
+
+   public boolean isChildOf(Directory directory, String systemRoot) {
+      if (parent.equals(directory.getPath())) {
+         return true;
+      }
+
+      else if (directory.getPath().equals(systemRoot)) {
+         return false;
+      }
+
+      return isChildOf(
+         new Directory(new File(directory.getParent())), systemRoot
+      );
    }
 
 }

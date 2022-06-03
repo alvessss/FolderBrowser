@@ -1,11 +1,16 @@
 package com.alvessss.folderbrowser;
 
+import android.os.Environment;
+
 @SuppressWarnings("all")
 class DirectoryNavigation {
-   // recycler view to put the directories data.
+   private static final String systemRoot = Environment.
+      getExternalStorageDirectory().getAbsolutePath();
+
+   // Recycler-view pointer to put the directories data.
    private RecyclerViewInterface recyclerViewInterface;
 
-   // default and current directory
+   // Default and current directory
    private Directory rootDirectory;
    private Directory currentDirectory;
 
@@ -26,8 +31,8 @@ class DirectoryNavigation {
    }
 
    void setCurrentDirectory(Directory currentDirectory) {
-      // if (currentDirectory.isChildOf(rootDirectory)) {
-      this.currentDirectory = currentDirectory;
-      // }
+      if (currentDirectory.isChildOf(rootDirectory, systemRoot)) {
+         this.currentDirectory = currentDirectory;
+      }
    }
 }
