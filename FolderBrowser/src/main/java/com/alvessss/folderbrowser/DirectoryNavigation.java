@@ -3,7 +3,7 @@ package com.alvessss.folderbrowser;
 import android.os.Environment;
 
 @SuppressWarnings("all")
-class DirectoryNavigation {
+public class DirectoryNavigation {
    private static final String systemRoot = Environment.
       getExternalStorageDirectory().getAbsolutePath();
 
@@ -14,7 +14,7 @@ class DirectoryNavigation {
    private Directory rootDirectory;
    private Directory currentDirectory;
 
-   DirectoryNavigation() {
+   public DirectoryNavigation() {
    }
 
    DirectoryNavigation(Directory rootDirectory, RecyclerViewInterface recyclerViewInterface) {
@@ -22,15 +22,15 @@ class DirectoryNavigation {
       setRecyclerViewInterface(recyclerViewInterface);
    }
 
-   void setRootDirectory(Directory rootDirectory) {
+   public void setRootDirectory(Directory rootDirectory) {
       this.rootDirectory = rootDirectory;
    }
 
-   void setRecyclerViewInterface(RecyclerViewInterface recyclerViewInterface) {
+   public void setRecyclerViewInterface(RecyclerViewInterface recyclerViewInterface) {
       this.recyclerViewInterface = recyclerViewInterface;
    }
 
-   void setCurrentDirectory(Directory currentDirectory) {
+   public void setCurrentDirectory(Directory currentDirectory) {
       if (currentDirectory.isChildOf(rootDirectory, systemRoot)) {
          this.currentDirectory = currentDirectory;
       }
