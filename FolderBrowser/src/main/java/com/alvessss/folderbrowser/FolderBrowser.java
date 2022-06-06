@@ -18,6 +18,7 @@ public class FolderBrowser {
    // From the calling context.
    private Context context;
    private AppCompatActivity appCompatActivity;
+   private ViewGroup viewGroup;
 
    // Navigation logic.
    private Inode currentInode;
@@ -72,20 +73,25 @@ public class FolderBrowser {
 
       private final FolderBrowser instance;
 
-      public Builder(@NonNull final Context parentActivityContext) {
+      public Builder(@NonNull final ViewGroup parentContentContainer) {
          instance = new FolderBrowser();
-         instance.context = parentActivityContext;
-         instance.appCompatActivity = (AppCompatActivity) parentActivityContext;
+         instance.context = parentContentContainer.getContext();
+         instance.appCompatActivity = (AppCompatActivity) instance.context;
+         instance.viewGroup = parentContentContainer;
       }
 
       public static String validate(FolderBrowser folderBrowser) {
          if (folderBrowser.context == null) {
-            return "The Context of the calling activity cannot be null!";
+            return "THE CONTEXT OF THE CALLING ACTIVITY CANNOT BE NULL!";
+         }
+
+         if (folderBrowser.viewGroup == null) {
+            return "THE VIEW-GROUP CONTAINER OF THE FOLDER BROWSER CANNOT BE NULL!";
          }
 
          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (!folderBrowser.context.isUiContext()) {
-               return "The Context of the calling activity must be the UI Context!";
+               return "THE CONTEXT OF THE CALLING ACTIVITY MUST BE THE UI CONTEXT";
             }
          }
 
