@@ -1,14 +1,21 @@
 package com.alvessss.folderbrowser;
 
-import java.io.File;
-import java.util.Objects;
-
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
+   // FolderBrowse stuff
+   private static final int FOLDER_BROWSER_CONTAINER_ID = R.id.folder_browser_container_viewgroup;
+   private static final String FOLDER_BROWSER_ROOT = Environment
+      .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+      .getAbsolutePath();
    private FolderBrowser folderBrowser;
 
    @Override
@@ -21,23 +28,24 @@ public class MainActivity extends AppCompatActivity {
    protected void onStart() {
       super.onStart();
 
-      DirectoryNavigation nav = new DirectoryNavigation();
+      // set FolderBrowser
+      ViewGroup folderBrowserContainerView = MainActivity.this.findViewById(FOLDER_BROWSER_CONTAINER_ID);
+      folderBrowser = new FolderBrowser.Builder(folderBrowserContainerView)
+         .setRoot(FOLDER_BROWSER_ROOT)
+         .build();
 
-      String myRoot = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath();
-      Directory dirRoot = new Directory(new File(myRoot));
-      File[] myRootChildren = (new File(myRoot)).listFiles();
-
-      Directory dirChild = null;
-      for (int i = 0; i < Objects.requireNonNull(myRootChildren).length; i++) {
-         if (myRootChildren[i].isDirectory()) {
-            dirChild = new Directory(myRootChildren[i]);
-            break;
+      ((FloatingActionButton)findViewById((R.id.folder_browser_launcher_button))).setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View view) {
+            showFolderBrowser(view);
          }
-      }
-
-      if (dirChild.isChildOf(dirRoot, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath())) {
-         Log.d("DEBUG", "is child of");
-      }
-
+      });
    }
-} 
+
+   public void showFolderBrowser(View view) {
+      Log.i("DEBUG", "hi 1");
+      folderBrowser.launch();
+      folderBrowser.start(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath());
+   }
+
+}
