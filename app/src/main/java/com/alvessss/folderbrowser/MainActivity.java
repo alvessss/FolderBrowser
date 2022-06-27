@@ -3,8 +3,6 @@ package com.alvessss.folderbrowser;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,7 +12,7 @@ public class MainActivity extends AppCompatActivity {
    // FolderBrowse stuff
    private static final int FOLDER_BROWSER_CONTAINER_ID = R.id.folder_browser_container_viewgroup;
    private static final String FOLDER_BROWSER_ROOT = Environment
-      .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+      .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
       .getAbsolutePath();
    private FolderBrowser folderBrowser;
 
@@ -34,18 +32,26 @@ public class MainActivity extends AppCompatActivity {
          .setRoot(FOLDER_BROWSER_ROOT)
          .build();
 
-      ((FloatingActionButton)findViewById((R.id.folder_browser_launcher_button))).setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View view) {
-            showFolderBrowser(view);
-         }
+      ((FloatingActionButton)findViewById((R.id.folder_browser_launcher_button)))
+         .setOnClickListener(
+            new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               showFolderBrowser(view);
+            }
       });
    }
 
    public void showFolderBrowser(View view) {
-      Log.i("DEBUG", "hi 1");
+      Directory rootDirectory = new Directory(
+         new java.io.File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+               .getAbsolutePath()
+         )
+      );
+
       folderBrowser.launch();
-      folderBrowser.start(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath());
+      folderBrowser.start(rootDirectory);
    }
 
 }

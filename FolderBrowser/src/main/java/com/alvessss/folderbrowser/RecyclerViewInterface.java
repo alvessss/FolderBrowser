@@ -22,9 +22,10 @@ class RecyclerViewInterface extends RecyclerView.Adapter<RecyclerViewInterface.C
    private final ArrayList<DataBody> recyclerViewData;
    private final RecyclerView recyclerView;
 
+   private View.OnClickListener onClickItem;
+
    RecyclerViewInterface(Context context) {
       recyclerViewData = new ArrayList<>();
-      // recyclerView = ((AppCompatActivity)context).findViewById(R.id.recycler_view_for_directory_content);
       recyclerView = (RecyclerView) ((AppCompatActivity)context).findViewById(R.id.recycler_view_for_directory_content);
       recyclerView.setVisibility(RecyclerView.VISIBLE);
 
@@ -39,6 +40,10 @@ class RecyclerViewInterface extends RecyclerView.Adapter<RecyclerViewInterface.C
       recyclerView.setLayoutParams(params);
       recyclerView.setLayoutManager(layoutManager);
       recyclerView.setVisibility(View.VISIBLE);
+   }
+
+   public void setOnClickItem(View.OnClickListener onClicklistener) {
+      onClickItem = onClicklistener;
    }
 
    public RecyclerView getRecyclerViewObj() {
@@ -87,6 +92,15 @@ class RecyclerViewInterface extends RecyclerView.Adapter<RecyclerViewInterface.C
       holder.nameView.setText(recyclerViewData.get(position).name);
       holder.pathView.setText(recyclerViewData.get(position).path);
       holder.iconView.setImageDrawable(recyclerViewData.get(position).icon);
+      holder.itemView.setOnClickListener(onClickItem);
+
+      String inodePath = recyclerViewData.get(position).path;
+      if (Inode.isFile(inodePath)) {
+         FolderBrowser.changeIconColor(holder.itemView, FolderBrowser.FILE_COLOR);
+      }
+      else if (Inode.isDirectory(inodePath)) {
+         FolderBrowser.changeIconColor(holder.iconView, FolderBrowser.DIRECTORY_COLOR);
+      }
    }
 
    @Override

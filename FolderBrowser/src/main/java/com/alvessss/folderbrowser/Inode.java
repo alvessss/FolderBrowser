@@ -1,10 +1,12 @@
 package com.alvessss.folderbrowser;
 
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 
 import java.io.File;
+import java.nio.charset.CharsetEncoder;
 
 @SuppressWarnings("all")
 class Inode {
@@ -24,11 +26,71 @@ class Inode {
    private final boolean write;
    private final boolean exec;
 
+   // Extra
+   private boolean highlighted = false;
+   private View inodeView;
+
+   public static boolean isFile(String inodePath) {
+      return new Inode(
+         new java.io.File(inodePath)
+      ).isFile();
+   }
+
+   public static boolean isDirectory(String inodePath) {
+      return new Inode(
+         new java.io.File(inodePath)
+      ).isDirectory();
+   }
+
+   public static boolean isChildOf(Directory checkingDirectory, Directory rootDirectory, String systemRoot) {
+      // The checking directory is the system root.
+      if (rootDirectory.getPath().equals(checkingDirectory.getPath())) {
+         return false;
+      }
+
+      // Cannot access the checkingDirectory
+      else if (checkingDirectory == null) {
+         return false;
+      }
+
+      // Cannot access the parent directory.
+      else if (checkingDirectory.getParent() == null) {
+         return false;
+      }
+
+      // We are in the systemRoot
+      else if (checkingDirectory.getPath().equals(systemRoot)) {
+         return false;
+      }
+
+      // The checking-directory is child of rootDirectory
+      else if (checkingDirectory.getParent().equals(rootDirectory.getPath())) {
+         return true;
+      }
+
+      // recursion
+      return isChildOf(
+         new Directory(
+            new java.io.File(
+               checkingDirectory.getParent()
+            )
+         ),
+         rootDirectory,
+         systemRoot
+      );
+   }
+
    public Inode(@NonNull File sourceFile) {
       name = sourceFile.getName();
       path = sourceFile.getAbsolutePath();
-      parent = sourceFile.getParent();
       Log.v(TAG, "name: " + name);
+
+      if (sourceFile.getParentFile() == null) {
+         Log.v(TAG, name + "is null. Path = " + path);
+         parent = null;
+      } else {
+         parent = sourceFile.getParentFile().getAbsolutePath();
+      }
 
       file = sourceFile.isFile();
       directory = sourceFile.isDirectory();
@@ -76,18 +138,19 @@ class Inode {
       return exec;
    }
 
-   public boolean isChildOf(Directory directory, String systemRoot) {
-      if (parent.equals(directory.getPath())) {
-         return true;
-      }
-
-      else if (directory.getPath().equals(systemRoot)) {
-         return false;
-      }
-
-      return isChildOf(
-         new Directory(new File(directory.getParent())), systemRoot
-      );
+   public boolean isHighlighted() {
+      return highlighted;
    }
 
+   public void isHighlited(boolean val) {
+      highlighted = val;
+   }
+
+   public View getInodeView() {
+      return inodeView;
+   }
+
+   public void setInodeView(View view) {
+      inodeView = view;
+   }
 }
