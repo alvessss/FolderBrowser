@@ -12,4 +12,5 @@ your filesystem and select a file.</p>
 </ol>
 
 <h2>Filesystem</h2>
-
+<h2>Files</h2>
+<h2>Directories</h2>
