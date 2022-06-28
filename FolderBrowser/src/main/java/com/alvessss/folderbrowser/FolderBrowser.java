@@ -13,8 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
-import java.io.File;
-
 @SuppressWarnings("all")
 public class FolderBrowser {
    // Tag for debug.
