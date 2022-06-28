@@ -99,7 +99,7 @@ class RecyclerViewInterface extends RecyclerView.Adapter<RecyclerViewInterface.C
          FolderBrowser.changeIconColor(holder.itemView, FolderBrowser.FILE_COLOR);
       }
       else if (Inode.isDirectory(inodePath)) {
-         FolderBrowser.changeIconColor(holder.iconView, FolderBrowser.DIRECTORY_COLOR);
+         FolderBrowser.changeIconColor(holder.itemView, FolderBrowser.DIRECTORY_COLOR);
       }
    }
 

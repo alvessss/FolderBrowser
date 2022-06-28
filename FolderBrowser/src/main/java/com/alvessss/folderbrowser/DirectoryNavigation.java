@@ -31,7 +31,7 @@ public class DirectoryNavigation {
    }
 
    public void setCurrentDirectory(Directory currentDirectory) {
-      if (Directory.isChildOf(currentDirectory, rootDirectory, systemRoot)) {
+      if (Directory.isChildOf(currentDirectory.getPath(), rootDirectory.getPath())) {
          this.currentDirectory = currentDirectory;
       }
    }

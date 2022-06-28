@@ -5,9 +5,6 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import java.io.File;
-import java.nio.charset.CharsetEncoder;
-
 @SuppressWarnings("all")
 class Inode {
    private static final String TAG = "FolderBrowser.Inode";
@@ -42,45 +39,23 @@ class Inode {
       ).isDirectory();
    }
 
-   public static boolean isChildOf(Directory checkingDirectory, Directory rootDirectory, String systemRoot) {
-      // The checking directory is the system root.
-      if (rootDirectory.getPath().equals(checkingDirectory.getPath())) {
+   public static boolean isChildOf(String targetDirectory, String rootDirectory) {
+      int pathStart, pathEnd;
+
+      pathStart = targetDirectory.indexOf(rootDirectory);
+      pathEnd = rootDirectory.length();
+      if (pathStart == -1) {
          return false;
       }
 
-      // Cannot access the checkingDirectory
-      else if (checkingDirectory == null) {
+      else if (pathEnd >= targetDirectory.length()) {
          return false;
       }
 
-      // Cannot access the parent directory.
-      else if (checkingDirectory.getParent() == null) {
-         return false;
-      }
-
-      // We are in the systemRoot
-      else if (checkingDirectory.getPath().equals(systemRoot)) {
-         return false;
-      }
-
-      // The checking-directory is child of rootDirectory
-      else if (checkingDirectory.getParent().equals(rootDirectory.getPath())) {
-         return true;
-      }
-
-      // recursion
-      return isChildOf(
-         new Directory(
-            new java.io.File(
-               checkingDirectory.getParent()
-            )
-         ),
-         rootDirectory,
-         systemRoot
-      );
+      return true;
    }
 
-   public Inode(@NonNull File sourceFile) {
+   public Inode(@NonNull java.io.File sourceFile) {
       name = sourceFile.getName();
       path = sourceFile.getAbsolutePath();
       Log.v(TAG, "name: " + name);
@@ -152,5 +127,17 @@ class Inode {
 
    public void setInodeView(View view) {
       inodeView = view;
+   }
+
+   public Directory toDirectory() {
+      return new Directory(
+         new java.io.File(path)
+      );
+   }
+
+   public File toFile() {
+      return new File(
+         new java.io.File(path)
+      );
    }
 }

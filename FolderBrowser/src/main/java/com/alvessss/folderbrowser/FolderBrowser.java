@@ -46,8 +46,9 @@ public class FolderBrowser {
    private Inode previousInode;
    private Mode mode; // TODO
 
-   ViewGroup folderBrowserContentViewGroup;
-   RecyclerViewInterface recyclerViewInterface;
+   private ViewGroup folderBrowserContentViewGroup;
+   private RecyclerViewInterface recyclerViewInterface;
+   private TextView directoryPath;
 
    public static void changeIconColor(View inodeView, int NEW_COLOR) {
       ((ImageView)inodeView
@@ -107,6 +108,7 @@ public class FolderBrowser {
    public void start(Directory directory) {
       // Update the current inode.
       currentInode = (Inode) directory;
+      directoryPath.setText(currentInode.getPath());
 
       // List the children of the target directory.
       String[] listedPaths = listDirectory(directory);
@@ -136,11 +138,12 @@ public class FolderBrowser {
       // Set return button.
       View.OnClickListener returnButtonListener = view -> {
          // Check if the currentInode is child of the setted root.
-         if (Directory.isChildOf((Directory) currentInode, root, systemRoot)) {
-            Log.v(TAG, "is child of");
+         if (Inode.isChildOf(currentInode.getPath(), root.getPath())) {
             restart(
                new Directory(
-                  new java.io.File(currentInode.getParent())
+                  new java.io.File(
+                     currentInode.getParent()
+                  )
                )
             );
          }
@@ -195,6 +198,10 @@ public class FolderBrowser {
             currentInode = selectedInode;
          }
       });
+
+      // Set directory's path display
+      this.directoryPath = ((AppCompatActivity) context)
+         .findViewById(R.id.text_view_for_directory_path);
    }
 
    private static String[] listDirectory(Directory directoryPath) {
@@ -207,6 +214,7 @@ public class FolderBrowser {
       String[] listedPaths = new String[listedFiles.length];
       for (int i = 0; i < listedFiles.length; i++) {
          listedPaths[i] = listedFiles[i].getAbsolutePath();
+         Log.v(TAG, "listing/" + i + ": " + listedPaths[i]);
       }
 
       return listedPaths;

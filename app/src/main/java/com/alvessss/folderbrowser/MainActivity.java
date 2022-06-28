@@ -1,14 +1,32 @@
 package com.alvessss.folderbrowser;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.Manifest;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
+   private static final String TAG = "MainActivity";
+
+   // Permission requester
+   private ActivityResultLauncher<String> requestPermissionLauncher =
+      registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+         if (isGranted) {
+            Log.v(TAG, "permission granted");
+         } else {
+            Log.v(TAG, "permission not granted");
+         }
+      });
+
+
    // FolderBrowse stuff
    private static final int FOLDER_BROWSER_CONTAINER_ID = R.id.folder_browser_container_viewgroup;
    private static final String FOLDER_BROWSER_ROOT = Environment
@@ -40,12 +58,17 @@ public class MainActivity extends AppCompatActivity {
                showFolderBrowser(view);
             }
       });
+
+      // request permission
+      requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+      requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
    }
 
    public void showFolderBrowser(View view) {
       Directory rootDirectory = new Directory(
          new java.io.File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            Environment
+               .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
                .getAbsolutePath()
          )
       );
