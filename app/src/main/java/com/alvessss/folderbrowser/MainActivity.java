@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
    private static final String TAG = "MainActivity";
 
    // Permission requester
-   private ActivityResultLauncher<String> requestPermissionLauncher =
+   private final ActivityResultLauncher<String> requestPermissionLauncher =
       registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
          if (isGranted) {
             Log.v(TAG, "permission granted");
@@ -48,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
       ViewGroup folderBrowserContainerView = MainActivity.this.findViewById(FOLDER_BROWSER_CONTAINER_ID);
       folderBrowser = new FolderBrowser.Builder(folderBrowserContainerView)
          .setRoot(FOLDER_BROWSER_ROOT)
+         .setOnDoneCallback(() -> {
+            Log.i(TAG, folderBrowser.getSelectedInode().getName());
+         })
          .build();
 
       ((FloatingActionButton)findViewById((R.id.folder_browser_launcher_button)))
@@ -68,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
       Directory rootDirectory = new Directory(
          new java.io.File(
             Environment
-               .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+               .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                .getAbsolutePath()
          )
       );

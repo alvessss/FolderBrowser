@@ -43,6 +43,7 @@ public class FolderBrowser {
    private Inode currentInode;
    private Inode previousInode;
    private Mode mode; // TODO
+   private RunnableCallback onDoneCallback;
 
    private ViewGroup folderBrowserContentViewGroup;
    private RecyclerViewInterface recyclerViewInterface;
@@ -69,6 +70,14 @@ public class FolderBrowser {
 
    /* private constructor */
    private FolderBrowser() {
+   }
+
+   public Inode getSelectedFile() {
+      return getSelectedInode();
+   }
+
+   public Inode getSelectedInode() {
+      return currentInode;
    }
 
    public void launch() {
@@ -197,7 +206,18 @@ public class FolderBrowser {
          }
       });
 
-      // Set directory's path display
+      // Set done button.
+      ((AppCompatActivity) context)
+         .findViewById(R.id.button_view_for_select_file)
+         .setOnClickListener(view -> {
+            if (onDoneCallback != null){
+               onDoneCallback.run();
+            } else {
+               Log.w(TAG, "onDoneCallback is null, nothing todo.");
+            }
+         });
+
+      // Set directory's path display.
       this.directoryPath = ((AppCompatActivity) context)
          .findViewById(R.id.text_view_for_directory_path);
    }
@@ -227,6 +247,10 @@ public class FolderBrowser {
       };
    }
 
+   public interface RunnableCallback {
+      void run();
+   }
+
    public static class Builder {
       private static final String TAG = "FolderBrowser.Builder";
       private static final String VALIDATION_OK = "ALL FIELDS ALRIGHT :)";
@@ -243,6 +267,11 @@ public class FolderBrowser {
          building.root = new Directory(
             new java.io.File(root)
          );
+         return this;
+      }
+
+      public Builder setOnDoneCallback(RunnableCallback callback) {
+         building.onDoneCallback = callback;
          return this;
       }
 
