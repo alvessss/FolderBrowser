@@ -24,10 +24,17 @@ class Filesystem {
    private TextView directoryPath;
    private final Callback callbackForOnDoneButton;
 
-   Filesystem(FolderBrowser folderBrowser, Callback onDoneCallback) {
+   Filesystem(Callback onDoneCallback) {
       callbackForOnDoneButton = onDoneCallback;
+   }
+
+   public void setViews(FolderBrowser folderBrowser) {
       setButtonsCallbacks(folderBrowser);
       setDirectoryPathDisplay(folderBrowser);
+   }
+
+   public void setCurrentInode(Inode inode) {
+      currentInode = inode;
    }
 
    public void setRoot(String rootPath) {
@@ -65,13 +72,7 @@ class Filesystem {
          view -> {
             // Check if the currentInode is child of the setted root.
             if (Inode.isChildOf(currentInode.getPath(), root.getPath())) {
-               folderBrowser.restart(
-                  new Directory(
-                    new java.io.File(
-                       currentInode.getParent()
-                    )
-                 )
-              );
+               folderBrowser.restart(currentInode.getParent());
            }
       };
       folderBrowser.getAppCompatActivity()
@@ -90,8 +91,8 @@ class Filesystem {
             // remove the highlight of the previous selected inode if any.
             if (previousInode != null) {
                if (previousInode.isFile()) {
-                  FolderBrowser.changeIconColor(
-                     previousInode.getInodeView(), FolderBrowser.FILE_COLOR
+                  Inode.changeIconColor(
+                     previousInode.getInodeView(), File.FILE_COLOR
                   );
                }
                else if (previousInode.isDirectory()) {
@@ -106,12 +107,12 @@ class Filesystem {
 
             if (selectedInode.isDirectory()) {
                previousInode = selectedInode;
-               FolderBrowser.changeIconColor(inodeView, FolderBrowser.DIRECTORY_HIGHLIGHT_COLOR);
-               folderBrowser.restart(new Directory(inodeSourceFile));
+               Inode.changeIconColor(inodeView, Directory.HIGHLIGHTED_DIRECTORY_COLOR);
+               folderBrowser.restart(newInodePath);
             }
 
             else if (selectedInode.isFile()) {
-               FolderBrowser.changeIconColor(inodeView, FolderBrowser.FILE_HIGHLIGHT_COLOR);
+               Inode.changeIconColor(inodeView, File.HIGHLIGHTED_FILE_COLOR);
                selectedInode.setInodeView(inodeView);
                currentInode = selectedInode;
             }

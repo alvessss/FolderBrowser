@@ -46,12 +46,10 @@ public class MainActivity extends AppCompatActivity {
 
       // set FolderBrowser
       ViewGroup folderBrowserContainerView = MainActivity.this.findViewById(FOLDER_BROWSER_CONTAINER_ID);
-      folderBrowser = new FolderBrowser.Builder(folderBrowserContainerView)
-         .setRoot(FOLDER_BROWSER_ROOT)
-         .setOnDoneCallback(() -> {
-            Log.i(TAG, folderBrowser.getSelectedInode().getName());
-         })
-         .build();
+
+      folderBrowser = new FolderBrowser(this, folderBrowserContainerView, () -> {
+         Log.i(TAG, folderBrowser.getCurrentInode().getName());
+      });
 
       ((FloatingActionButton)findViewById((R.id.folder_browser_launcher_button)))
          .setOnClickListener(
@@ -68,16 +66,9 @@ public class MainActivity extends AppCompatActivity {
    }
 
    public void showFolderBrowser(View view) {
-      Directory rootDirectory = new Directory(
-         new java.io.File(
-            Environment
-               .getRootDirectory()
-               .getAbsolutePath()
-         )
-      );
-
       folderBrowser.launch();
-      folderBrowser.start(rootDirectory);
+      folderBrowser.setRoot("/system");
+      folderBrowser.start("/system");
    }
 
 }

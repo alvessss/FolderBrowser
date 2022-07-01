@@ -96,10 +96,10 @@ class RecyclerViewInterface extends RecyclerView.Adapter<RecyclerViewInterface.C
 
       String inodePath = recyclerViewData.get(position).path;
       if (Inode.isFile(inodePath)) {
-         FolderBrowser.changeIconColor(holder.itemView, FolderBrowser.FILE_COLOR);
+         Inode.changeIconColor(holder.itemView, File.FILE_COLOR);
       }
       else if (Inode.isDirectory(inodePath)) {
-         FolderBrowser.changeIconColor(holder.itemView, FolderBrowser.DIRECTORY_COLOR);
+         Inode.changeIconColor(holder.itemView, Directory.DIRECTORY_COLOR);
       }
    }
 
