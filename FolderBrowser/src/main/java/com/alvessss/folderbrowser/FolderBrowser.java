@@ -15,60 +15,65 @@ import androidx.core.content.res.ResourcesCompat;
 
 @SuppressWarnings("all")
 public class FolderBrowser {
-   // Tag for debug.
+   // Debug tag.
    private static final String TAG = "FolderBrowser";
 
    // Icons for Directory and File.
    public static final int FILE_ICON_ID = R.drawable.default_icon_for_file;
    public static final int DIRECTORY_ICON_ID = R.drawable.default_icon_for_directory;
 
-   // Default colors
+   // Default colors for the icons.
    public static final int FILE_COLOR = R.color.ocean_white_foreground;
    public static final int DIRECTORY_COLOR = R.color.ocean_blue_foreground;
+
+   // Colors when the icons are selected.
    public static final int FILE_HIGHLIGHT_COLOR = R.color.ocean_gray_foreground;
    public static final int DIRECTORY_HIGHLIGHT_COLOR = R.color.ocean_gray_foreground;
 
-   // System root
-   private static final String systemRoot = Environment
+   // Root of the system.
+   private static final String SYSTEM_ROOT = Environment
       .getRootDirectory()
       .getAbsolutePath();
 
-   // From the calling context.
-   private Context context;
-   private AppCompatActivity appCompatActivity;
-   private ViewGroup parentViewGroup;
+   // Objects getted from the calling class:
+   private Context context;   // To use resources of the Client.
+   private AppCompatActivity appCompatActivity; // idem
+   private ViewGroup parentViewGroup; // To put our screen (view) inside the Client's screen (view).
 
-   // Navigation logic.
-   private Directory root;
-   private Inode currentInode;
-   private Inode previousInode;
-   private Mode mode; // TODO
-   private RunnableCallback onDoneCallback;
+   // Main fields. Setteds in the Builder/Constructor (just once):
+   private Directory root; // The root directory (SYSTEM_ROOT will be used if it is not setted).
+   private Inode currentInode; // The current directory/file (The file that is clicked or the directory that is opened).
+   private Inode previousInode; // The previous currentInode.
+   private RunnableCallback onDoneCallback; // Will perform when the Final-User click on "done" to select a directory/file.
 
-   private ViewGroup folderBrowserContentViewGroup;
-   private RecyclerViewInterface recyclerViewInterface;
-   private TextView directoryPath;
+   // Auxiliar objects
+   private ViewGroup folderBrowserContentViewGroup; // The View-Group where we'll put all the data.
+   private RecyclerViewInterface recyclerViewInterface; // All the recycler view stuff to print the directories/files on the screen.
+   private TextView directoryPath; // Text view to show the path of the current directory to the Final-User.
 
-   public static void changeIconColor(View inodeView, int NEW_COLOR) {
-      ((ImageView)inodeView
-         .findViewById(R.id.image_view_for_inode_icon))
-         .setColorFilter(ContextCompat.getColor(inodeView.getContext(), NEW_COLOR),
+   // Static functions.
+   public static void changeIconColor(View recyclerViewItemView, int NEW_COLOR) {
+      ((ImageView)recyclerViewItemView
+         .findViewById(R.id.image_view_for_inode_icon)) // we have always to search the imageView cuz the RecyclerView is dynamic.
+         .setColorFilter(ContextCompat.getColor(recyclerViewItemView.getContext(), NEW_COLOR),
             android.graphics.PorterDuff.Mode.MULTIPLY);
    }
 
-   private static void highlightInode(View inodeView, Inode inode) {
+   private static void highlightInode(View recyclerViewItemView, Inode inode) {
       if (inode.isFile()) {
-         FolderBrowser.changeIconColor(inodeView, FILE_HIGHLIGHT_COLOR);
+         FolderBrowser.changeIconColor(recyclerViewItemView, FILE_HIGHLIGHT_COLOR);
          return;
       }
 
       if (inode.isDirectory()) {
-         FolderBrowser.changeIconColor(inodeView, DIRECTORY_HIGHLIGHT_COLOR);
+         FolderBrowser.changeIconColor(recyclerViewItemView, DIRECTORY_HIGHLIGHT_COLOR);
          return;
       }
-   }
 
-   /* private constructor */
+      // Here could be more cases
+   }
+   //
+
    private FolderBrowser() {
    }
 
@@ -142,7 +147,7 @@ public class FolderBrowser {
    }
 
    private void setOnClickListenersOfNavigationButtons() {
-      // Set return button.
+      // 1: Set return-button's callback.
       View.OnClickListener returnButtonListener = view -> {
          // Check if the currentInode is child of the setted root.
          if (Inode.isChildOf(currentInode.getPath(), root.getPath())) {
@@ -159,7 +164,7 @@ public class FolderBrowser {
          .findViewById(R.id.button_view_for_previous_directory)
          .setOnClickListener(returnButtonListener);
 
-      // Set select button.
+      // 2: Set select-button's callback.
       recyclerViewInterface.setOnClickItem(inodeView -> {
          // Set the previousInode with the currentInode before
          // it change.
@@ -206,7 +211,7 @@ public class FolderBrowser {
          }
       });
 
-      // Set done button.
+      // 3: Set done-button's callback.
       ((AppCompatActivity) context)
          .findViewById(R.id.button_view_for_select_file)
          .setOnClickListener(view -> {
@@ -217,7 +222,7 @@ public class FolderBrowser {
             }
          });
 
-      // Set directory's path display.
+      // 4: Set directory's path display.
       this.directoryPath = ((AppCompatActivity) context)
          .findViewById(R.id.text_view_for_directory_path);
    }
@@ -236,15 +241,6 @@ public class FolderBrowser {
       }
 
       return listedPaths;
-   }
-
-   public enum Mode {
-      DIRECTORY(0), FILE(1);
-
-      public int val;
-      Mode(int val){
-         this.val = val;
-      };
    }
 
    public interface RunnableCallback {
@@ -276,6 +272,14 @@ public class FolderBrowser {
       }
 
       public FolderBrowser build() {
+         if (building.root == null) {
+            setRoot(SYSTEM_ROOT);
+         }
+
+         if (building.onDoneCallback == null) {
+            //
+         }
+
          return building;
       }
    }
