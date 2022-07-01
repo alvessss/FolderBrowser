@@ -19,16 +19,16 @@ public class FolderBrowser {
    private static final String TAG = "FolderBrowser";
 
    // Icons for Directory and File.
-   public static final int FILE_ICON_ID = R.drawable.default_icon_for_file;
-   public static final int DIRECTORY_ICON_ID = R.drawable.default_icon_for_directory;
+   public static final int FILE_ICON_ID = R.drawable.default_icon_for_file; // TODO: Put in the File class;
+   public static final int DIRECTORY_ICON_ID = R.drawable.default_icon_for_directory; // TODO: Put in the Directory class;
 
    // Default colors for the icons.
-   public static final int FILE_COLOR = R.color.ocean_white_foreground;
-   public static final int DIRECTORY_COLOR = R.color.ocean_blue_foreground;
+   public static final int FILE_COLOR = R.color.ocean_white_foreground; // TODO: Put in the File class;
+   public static final int DIRECTORY_COLOR = R.color.ocean_blue_foreground; // TODO: Put in the Directory class;
 
    // Colors when the icons are selected.
-   public static final int FILE_HIGHLIGHT_COLOR = R.color.ocean_gray_foreground;
-   public static final int DIRECTORY_HIGHLIGHT_COLOR = R.color.ocean_gray_foreground;
+   public static final int FILE_HIGHLIGHT_COLOR = R.color.ocean_gray_foreground; // TODO: Put in the File class;
+   public static final int DIRECTORY_HIGHLIGHT_COLOR = R.color.ocean_gray_foreground; // TODO: Put in the Directory class;
 
    // Root of the system.
    private static final String SYSTEM_ROOT = Environment
@@ -40,18 +40,19 @@ public class FolderBrowser {
    private AppCompatActivity appCompatActivity; // idem
    private ViewGroup parentViewGroup; // To put our screen (view) inside the Client's screen (view).
 
+   // TODO: Put the fields above in a class called Filesystem and create an instancie in this class;
    // Main fields. Setteds in the Builder/Constructor (just once):
    private Directory root; // The root directory (SYSTEM_ROOT will be used if it is not setted).
    private Inode currentInode; // The current directory/file (The file that is clicked or the directory that is opened).
    private Inode previousInode; // The previous currentInode.
    private RunnableCallback onDoneCallback; // Will perform when the Final-User click on "done" to select a directory/file.
+   private TextView directoryPath; // Text view to show the path of the current directory to the Final-User.
 
    // Auxiliar objects
    private ViewGroup folderBrowserContentViewGroup; // The View-Group where we'll put all the data.
    private RecyclerViewInterface recyclerViewInterface; // All the recycler view stuff to print the directories/files on the screen.
-   private TextView directoryPath; // Text view to show the path of the current directory to the Final-User.
 
-   // Static functions.
+   // Static functions. // TODO: Put in the Inode class;
    public static void changeIconColor(View recyclerViewItemView, int NEW_COLOR) {
       ((ImageView)recyclerViewItemView
          .findViewById(R.id.image_view_for_inode_icon)) // we have always to search the imageView cuz the RecyclerView is dynamic.
@@ -59,6 +60,7 @@ public class FolderBrowser {
             android.graphics.PorterDuff.Mode.MULTIPLY);
    }
 
+   // TODO: Put in the Inode class;
    private static void highlightInode(View recyclerViewItemView, Inode inode) {
       if (inode.isFile()) {
          FolderBrowser.changeIconColor(recyclerViewItemView, FILE_HIGHLIGHT_COLOR);
@@ -77,10 +79,12 @@ public class FolderBrowser {
    private FolderBrowser() {
    }
 
+   // TODO: Put in the Filesystem class;
    public Inode getSelectedFile() {
       return getSelectedInode();
    }
 
+   // TODO: Put in the Filesystem class;
    public Inode getSelectedInode() {
       return currentInode;
    }
@@ -146,6 +150,7 @@ public class FolderBrowser {
       recyclerViewInterface.updateScreen();
    }
 
+   // TODO: Put in the Filesytem class;
    private void setOnClickListenersOfNavigationButtons() {
       // 1: Set return-button's callback.
       View.OnClickListener returnButtonListener = view -> {
@@ -227,6 +232,7 @@ public class FolderBrowser {
          .findViewById(R.id.text_view_for_directory_path);
    }
 
+   // TODO: Put in the Directory class;
    private static String[] listDirectory(Directory directoryPath) {
       java.io.File rootFile = new java.io.File(directoryPath.getPath());
       if (rootFile == null) return new String[0];
