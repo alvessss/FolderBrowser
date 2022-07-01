@@ -1,13 +1,18 @@
 package com.alvessss.folderbrowser;
 
+import android.graphics.PorterDuff;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 @SuppressWarnings("all")
 class Inode {
    private static final String TAG = "FolderBrowser.Inode";
+
+   private static final int INODE_ICON = R.id.image_view_for_inode_icon;
 
    // Common
    private final String name;
@@ -26,6 +31,24 @@ class Inode {
    // Extra
    private boolean highlighted = false;
    private View inodeView;
+
+   public static void changeIconColor(View recyclerViewItemView, int NEW_COLOR) {
+      ((ImageView)recyclerViewItemView
+         .findViewById(INODE_ICON))
+         .setColorFilter(ContextCompat.getColor(
+            recyclerViewItemView.getContext(), NEW_COLOR),
+            PorterDuff.Mode.MULTIPLY);
+   }
+
+   public static void highlight(View recyclerViewItemView, Inode inode) {
+      if (inode.isFile()) {
+         changeIconColor(recyclerViewItemView, File.HIGHLIGHTED_FILE_COLOR);
+      }
+
+      else if (inode.isDirectory()) {
+         changeIconColor(recyclerViewItemView, Directory.HIGHLIGHTED_DIRECTORY_COLOR);
+      }
+   }
 
    public static boolean isFile(String inodePath) {
       return new Inode(

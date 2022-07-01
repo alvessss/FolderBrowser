@@ -4,7 +4,11 @@ import androidx.annotation.NonNull;
 
 @SuppressWarnings("all")
 public class File extends Inode {
-   private static final String TAG = "FolderBrowser.File";
+   public static final String TAG = "FB.File";
+
+   public static final int FILE_ICON = R.drawable.default_icon_for_file;
+   public static final int FILE_COLOR = R.color.ocean_white_foreground;
+   public static final int HIGHLIGHTED_FILE_COLOR = R.color.ocean_gray_foreground;
 
    private final String extension;
 
