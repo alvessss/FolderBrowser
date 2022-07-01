@@ -232,6 +232,7 @@ public class FolderBrowser {
       if (rootFile == null) return new String[0];
 
       java.io.File[] listedFiles = rootFile.listFiles();
+      if (listedFiles == null) return new String[0];
       if (listedFiles.length == 0) return new String[0];
 
       String[] listedPaths = new String[listedFiles.length];

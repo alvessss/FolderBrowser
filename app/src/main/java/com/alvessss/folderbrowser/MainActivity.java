@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
    // FolderBrowse stuff
    private static final int FOLDER_BROWSER_CONTAINER_ID = R.id.folder_browser_container_viewgroup;
    private static final String FOLDER_BROWSER_ROOT = Environment
-      .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+      .getRootDirectory()
       .getAbsolutePath();
    private FolderBrowser folderBrowser;
 
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
       Directory rootDirectory = new Directory(
          new java.io.File(
             Environment
-               .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+               .getRootDirectory()
                .getAbsolutePath()
          )
       );

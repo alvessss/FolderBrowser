@@ -1,3 +1,4 @@
 30/06/2022
 	> "Cleaning" : Apply clean code; Comment code; Check typos; Transform block of codes in functions;
+	> "Fix bug" : The Return-Button does not work when the root directory is the System Root;
 
