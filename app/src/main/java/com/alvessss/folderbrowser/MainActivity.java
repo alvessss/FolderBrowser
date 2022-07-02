@@ -66,9 +66,8 @@ public class MainActivity extends AppCompatActivity {
    }
 
    public void showFolderBrowser(View view) {
-      folderBrowser.launch();
       folderBrowser.setRoot("/system");
-      folderBrowser.start("/system");
+      folderBrowser.start("/system/usr");
    }
 
 }

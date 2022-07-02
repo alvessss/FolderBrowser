@@ -1,5 +1,6 @@
 package com.alvessss.folderbrowser;
 
+import android.net.wifi.WifiManager;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
@@ -13,10 +14,10 @@ class Filesystem {
       .getRootDirectory()
       .getAbsolutePath();
 
-   private static final int RETURN_BUTTON = R.id.button_view_for_previous_directory;
-   private static final int INODE_PATH = R.id.text_view_for_inode_path;
-   private static final int DIRECTORY_PATH = R.id.text_view_for_directory_path;
-   private static final int DONE_BUTTON = R.id.button_view_for_select_file;
+   public static final int RETURN_BUTTON = R.id.button_view_for_previous_directory;
+   public static final int INODE_PATH = R.id.text_view_for_inode_path;
+   public static final int DIRECTORY_PATH = R.id.text_view_for_directory_path;
+   public static final int DONE_BUTTON = R.id.button_view_for_select_file;
 
    private Directory root;
    private Inode currentInode;
@@ -26,15 +27,7 @@ class Filesystem {
 
    Filesystem(Callback onDoneCallback) {
       callbackForOnDoneButton = onDoneCallback;
-   }
-
-   public void setViews(FolderBrowser folderBrowser) {
-      setButtonsCallbacks(folderBrowser);
-      setDirectoryPathDisplay(folderBrowser);
-   }
-
-   public void setCurrentInode(Inode inode) {
-      currentInode = inode;
+      setRoot(SYSTEM_ROOOT);
    }
 
    public void setRoot(String rootPath) {
@@ -60,6 +53,15 @@ class Filesystem {
       return directoryPath;
    }
 
+   void setFolderBrowserCallbacks(FolderBrowser folderBrowser) {
+      setButtonsCallbacks(folderBrowser);
+      setDirectoryPathDisplay(folderBrowser);
+   }
+
+   void setCurrentInode(Inode inode) {
+      currentInode = inode;
+   }
+
    private void setButtonsCallbacks(FolderBrowser folderBrowser) {
       setReturnButton(folderBrowser);
       setOnInodeClickAction(folderBrowser);
@@ -75,7 +77,7 @@ class Filesystem {
                folderBrowser.restart(currentInode.getParent());
            }
       };
-      folderBrowser.getAppCompatActivity()
+      folderBrowser.getParentAppCompatActivity()
          .findViewById(RETURN_BUTTON)
          .setOnClickListener(returnButtonCallback);
    }
@@ -120,7 +122,7 @@ class Filesystem {
    }
 
    private void setCallbackForOnDoneButton(FolderBrowser folderBrowser) {
-      folderBrowser.getAppCompatActivity()
+      folderBrowser.getParentAppCompatActivity()
          .findViewById(DONE_BUTTON)
          .setOnClickListener(
             view -> {
@@ -134,7 +136,7 @@ class Filesystem {
    }
 
    private void setDirectoryPathDisplay(FolderBrowser folderBrowser) {
-      directoryPath = folderBrowser.getAppCompatActivity()
+      directoryPath = folderBrowser.getParentAppCompatActivity()
          .findViewById(DIRECTORY_PATH);
    }
 
