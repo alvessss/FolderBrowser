@@ -28,7 +28,6 @@ class RecyclerViewInterface extends RecyclerView.Adapter<RecyclerViewInterface.C
    RecyclerViewInterface(Context context) {
       recyclerViewData = new ArrayList<>();
       recyclerView = (RecyclerView) ((AppCompatActivity)context).findViewById(R.id.recycler_view_for_directory_content);
-      recyclerView.setVisibility(RecyclerView.VISIBLE);
 
       GridLayoutManager layoutManager = new GridLayoutManager(context, SPAN_COUNT);
       RelativeLayout.LayoutParams params = new
@@ -135,7 +134,6 @@ class RecyclerViewInterface extends RecyclerView.Adapter<RecyclerViewInterface.C
          
          return inodeDataBody;
       }
-   
    }
 
    static class CustomHolder extends RecyclerView.ViewHolder {

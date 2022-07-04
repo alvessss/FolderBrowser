@@ -70,11 +70,21 @@ public class FolderBrowser extends Filesystem {
       return parentAppCompatActivity;
    }
 
+   public boolean isLaunched() {
+      return launched;
+   }
+
    private void launch() {
       launched = true;
       inflateLayout();
       setRecyclerView();
       super.setFolderBrowserCallbacks(this);
+   }
+
+   public void release() {
+      launched = false;
+      recyclerViewInterface.clear();
+      parentViewGroup.removeView(folderBrowserContentViewGroup);
    }
 
    private void inflateLayout() {
@@ -87,11 +97,5 @@ public class FolderBrowser extends Filesystem {
 
    private void setRecyclerView() {
       recyclerViewInterface = new RecyclerViewInterface(parentActivityContext);
-   }
-
-   public void release() {
-      launched = false;
-      recyclerViewInterface.clear();
-      parentViewGroup.removeView(folderBrowserContentViewGroup);
    }
 }
