@@ -116,7 +116,11 @@ class Filesystem {
             java.io.File inodeSourceFile = new java.io.File(newInodePath);
             Inode selectedInode = new Inode(inodeSourceFile);
 
-            if (selectedInode.isDirectory()) {
+            if (!selectedInode.canRead()) {
+               folderBrowser.restart(newInodePath);
+            }
+
+            else if (selectedInode.isDirectory()) {
                previousInode = selectedInode;
                Inode.changeIconColor(inodeView, Directory.HIGHLIGHTED_DIRECTORY_COLOR);
                folderBrowser.restart(newInodePath);

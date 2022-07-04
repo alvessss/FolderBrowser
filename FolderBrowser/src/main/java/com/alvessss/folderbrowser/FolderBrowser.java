@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -54,6 +55,7 @@ public class FolderBrowser extends Filesystem {
 
       if (!directory.canRead()) {
          Log.w(DEBUG_TAG, "You have no permission to read the directory: " + directory.getName());
+         Toast.makeText(parentActivityContext, "You dont have permission to read this folder!", 1).show();
          return;
       }
 
