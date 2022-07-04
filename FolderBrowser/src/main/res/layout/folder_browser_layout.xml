@@ -46,10 +46,11 @@
         android:id="@+id/text_view_for_directory_path"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="/home"
+        android:text="/"
         android:textColor="@android:color/white"
         android:background="@color/ocean_blue_background"
         android:gravity="center"
         android:layout_alignParentBottom="true"/>
+
 
 </RelativeLayout>

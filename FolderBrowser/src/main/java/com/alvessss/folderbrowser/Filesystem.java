@@ -1,9 +1,13 @@
 package com.alvessss.folderbrowser;
 
 import android.os.Environment;
+import android.text.SpannableString;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 @SuppressWarnings("all")
 class Filesystem {

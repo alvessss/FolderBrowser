@@ -66,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
    }
 
    public void showFolderBrowser(View view) {
-      folderBrowser.setRoot("/system");
-      folderBrowser.start("/system/usr");
+      folderBrowser.setRoot(Environment.getExternalStorageDirectory().getPath());
+      folderBrowser.start(Environment.getExternalStorageDirectory().getPath());
    }
 
 }
