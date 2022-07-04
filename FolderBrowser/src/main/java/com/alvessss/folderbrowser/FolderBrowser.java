@@ -52,15 +52,18 @@ public class FolderBrowser extends Filesystem {
          launch();
       }
 
+      Directory directory = new Directory(
+         new java.io.File(directoryPath)
+      );
+
+      if (!directory.canRead()) {
+         Log.w(DEBUG_TAG, "You have no permission to read the directory: " + directory.getName());
+         return;
+      }
+
       super.setCurrentInode(directoryPath);
       super.getDirectoryPathView().setText(directoryPath);
-      setClickableSpansInDirectoryPathDisplay(
-         new Directory(
-            new java.io.File(
-               directoryPath
-            )
-         )
-      );
+      setClickableSpansInDirectoryPathDisplay(directory);
 
 
       // List the children of the target directory.
