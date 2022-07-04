@@ -1,6 +1,5 @@
 package com.alvessss.folderbrowser;
 
-import android.net.wifi.WifiManager;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
