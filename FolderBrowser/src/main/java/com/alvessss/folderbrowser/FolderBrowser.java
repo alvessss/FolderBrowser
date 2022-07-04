@@ -92,25 +92,36 @@ public class FolderBrowser extends Filesystem {
    }
 
    private void setClickableSpansInDirectoryPathDisplay(Directory directory) {
+      /*
+         This function put a click listener in each directory name in the directory path display
+       */
+
       String SLASH = "/";
       TextView textView = super.getDirectoryPathView();
 
+      // Lets break the path and put the useful data into these arrays
       ArrayList<String> paths = new ArrayList<>();
       ArrayList<String> names = new ArrayList<>();
       ArrayList<Integer> startIndexes = new ArrayList<>();
       ArrayList<Integer> endIndexes = new ArrayList<>();
       ArrayList<ClickableSpan> clickableSpans;
+      //
 
       int slashIndex;
       int startIndex;
       int endIndex;
       String name;
       String path;
-      String currentPath = textView.getText().toString();
+      String currentPath = textView.getText().toString(); // the path that we'll split
+
+      // start from the end
       while ((slashIndex = currentPath.lastIndexOf(SLASH)) != -1) {
+         // the last directory name start just after the last slash and goes to the end
          startIndex = slashIndex + 1;
          name = currentPath.substring(startIndex);
-         endIndex = currentPath.lastIndexOf(name) + name.length();
+         endIndex = startIndex + name.length();
+
+         // save the path before remove the current directory name
          path = currentPath;
          currentPath = currentPath.substring(0, slashIndex);
 
@@ -120,18 +131,21 @@ public class FolderBrowser extends Filesystem {
          endIndexes.add(endIndex);
       }
 
+      // get the current path again to fill the spannableString
       currentPath = textView.getText().toString();
       SpannableString spannableString = new SpannableString(currentPath);
 
       for (int i = 0; i < paths.size(); i++) {
-         int finalI = i; // i hate this
-         spannableString.setSpan(
-            new ClickableSpan() {
-               @Override
-               public void onClick(@NonNull View view){
-                  start(paths.get(finalI));
-               }
-            }, startIndexes.get(i), endIndexes.get(i), 0);
+         int finalI = i;
+         ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View view){
+               start(paths.get(finalI)); // each name will get your respective path
+            }
+         };
+
+         // put the clickableSpan into the String and set where each word starts end ends
+         spannableString.setSpan(clickableSpan, startIndexes.get(i), endIndexes.get(i), 0);
       }
 
       textView.setText(spannableString, TextView.BufferType.SPANNABLE);
