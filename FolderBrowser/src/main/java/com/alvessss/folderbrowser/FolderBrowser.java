@@ -63,7 +63,6 @@ public class FolderBrowser extends Filesystem {
       super.getDirectoryPathView().setText(directoryPath);
       setClickableSpansInDirectoryPathDisplay(directory);
 
-
       // List the children of the target directory.
       String[] listedPaths = Directory.listDirectory(directoryPath);
 
