@@ -13,12 +13,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.SavedStateHandle;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 @SuppressWarnings("all")
 public class FolderBrowser extends Filesystem {
