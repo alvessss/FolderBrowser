@@ -3,12 +3,13 @@ package com.alvessss.folderbrowser;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
 
 @SuppressWarnings("all")
 public class FolderBrowser extends Filesystem {
-   private static final String DEBUG_TAG = "FolderBrowser";
+   private static final String DEBUG_TAG = FolderBrowser.class.getSimpleName();
 
    private boolean launched = false;
 
@@ -19,8 +20,15 @@ public class FolderBrowser extends Filesystem {
    private ViewGroup folderBrowserContentViewGroup;
    private RecyclerViewInterface recyclerViewInterface;
 
-   public FolderBrowser(Context context, ViewGroup container, Callback onDoneCallback) {
+   public FolderBrowser(
+      @NonNull Context context,
+      @NonNull ViewGroup container,
+      @NonNull Callback onDoneCallback) {
+
+      // The Filesustem class requires a callback telling
+      // what to do when the final user click in the "done" button.
       super(onDoneCallback);
+
       this.parentActivityContext = context;
       this.parentAppCompatActivity = (AppCompatActivity) context;
       this.parentViewGroup = container;
@@ -31,33 +39,22 @@ public class FolderBrowser extends Filesystem {
          launch();
       }
 
-      Directory directory = new Directory(new java.io.File(directoryPath));
-
-      // Update the current inode.
-      super.setCurrentInode((Inode) directory);
-      super.getDirectoryPathView().setText(directory.getPath());
+      super.setCurrentInode(directoryPath);
+      super.getDirectoryPathView().setText(directoryPath);
 
       // List the children of the target directory.
-      String[] listedPaths = Directory.listDirectory(directory.getPath());
-      java.io.File[] childrenFiles = new java.io.File[listedPaths.length];
-      RecyclerViewInterface.DataBody[] inodeDataBody = new RecyclerViewInterface.DataBody[childrenFiles.length];
-
-      // Fill the data array with the children's data.
-      for (int i = 0; i < childrenFiles.length; i++) {
-         childrenFiles[i] = new java.io.File(listedPaths[i]);
-         inodeDataBody[i] = new RecyclerViewInterface.DataBody();
-         inodeDataBody[i].name = childrenFiles[i].getName();
-         inodeDataBody[i].path = childrenFiles[i].getPath();
-         inodeDataBody[i].icon = childrenFiles[i].isFile() ?
-            (ResourcesCompat.getDrawable(parentActivityContext.getResources(), R.drawable.default_icon_for_file, null)) :
-            (ResourcesCompat.getDrawable(parentActivityContext.getResources(), R.drawable.default_icon_for_directory, null));
+      String[] listedPaths = Directory.listDirectory(directoryPath);
+      if (listedPaths.length == 0) {
+         return;
       }
 
       // Reset the recycler view data if any.
       recyclerViewInterface.clear();
 
-      // Add the new data and update the screen.
-      recyclerViewInterface.addArray(inodeDataBody);
+      // Add the listed files in the Recycler View
+      recyclerViewInterface.addArray(
+         RecyclerViewInterface.DataBody.getFrom(listedPaths, parentActivityContext)
+      );
       recyclerViewInterface.updateScreen();
    }
 

@@ -61,6 +61,12 @@ class Filesystem {
       currentInode = inode;
    }
 
+   void setCurrentInode(String inodePath) {
+      currentInode = new Inode(
+         new java.io.File(inodePath)
+      );
+   }
+
    private void setButtonsCallbacks(FolderBrowser folderBrowser) {
       setReturnButton(folderBrowser);
       setOnInodeClickAction(folderBrowser);

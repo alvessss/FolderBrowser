@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -112,6 +113,29 @@ class RecyclerViewInterface extends RecyclerView.Adapter<RecyclerViewInterface.C
       String name;
       String path;
       Drawable icon;
+      
+      static @NonNull DataBody getFrom(String filePath, Context context) {
+         java.io.File fileSource = new java.io.File(filePath);
+         DataBody dataBody = new DataBody();
+         dataBody = new DataBody();
+         dataBody.name = fileSource.getName();
+         dataBody.path = fileSource.getPath();
+         dataBody.icon = fileSource.isFile() ?
+            (ResourcesCompat.getDrawable(context.getResources(), File.FILE_ICON, null)) :
+            (ResourcesCompat.getDrawable(context.getResources(), Directory.DIRECTORY_ICON, null));
+         
+         return dataBody;
+      }
+      
+      static @NonNull DataBody[] getFrom(String[] filePathsArray, Context context) {
+         DataBody[] inodeDataBody = new DataBody[filePathsArray.length];
+         for (int i = 0; i < filePathsArray.length; i++){
+            inodeDataBody[i] = getFrom(filePathsArray[i], context);
+         }
+         
+         return inodeDataBody;
+      }
+   
    }
 
    static class CustomHolder extends RecyclerView.ViewHolder {

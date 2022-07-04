@@ -81,27 +81,15 @@ class Inode {
    public Inode(@NonNull java.io.File sourceFile) {
       name = sourceFile.getName();
       path = sourceFile.getAbsolutePath();
-      Log.v(TAG, "name: " + name);
-
-      if (sourceFile.getParentFile() == null) {
-         Log.v(TAG, name + "is null. Path = " + path);
-         parent = null;
-      } else {
-         parent = sourceFile.getParentFile().getAbsolutePath();
-      }
-
       file = sourceFile.isFile();
       directory = sourceFile.isDirectory();
-      Log.v(TAG, "type: " + (file ? "file" : "directory"));
-
       read = sourceFile.canRead();
-      Log.v(TAG, "read: " + Boolean.toString(read));
-
       write = sourceFile.canWrite();
-      Log.v(TAG, "write: " + Boolean.toString(write));
-
       exec = sourceFile.canExecute();
-      Log.v(TAG, "exec: " + Boolean.toString(exec));
+      if (sourceFile.getParentFile() == null) {
+         parent = null; return;
+      }
+      parent = sourceFile.getParentFile().getAbsolutePath();
    }
 
    public String getName() {

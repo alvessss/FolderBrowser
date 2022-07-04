@@ -6,7 +6,7 @@ import java.io.File;
 
 @SuppressWarnings("all")
 public class Directory extends Inode {
-   public static final String TAG = "FB.Directory";
+   public static final String TAG = Directory.class.getSimpleName();
 
    public static final int DIRECTORY_ICON = R.drawable.default_icon_for_directory;
    public static final int DIRECTORY_COLOR = R.color.ocean_blue_foreground;
@@ -14,7 +14,7 @@ public class Directory extends Inode {
 
    private final String[] childs;
 
-   public static String[] listDirectory(String directoryPath) {
+   public static @NonNull String[] listDirectory(String directoryPath) {
       java.io.File sourceFile = new java.io.File(directoryPath);
       if (sourceFile == null) return new String[0];
 
@@ -30,11 +30,6 @@ public class Directory extends Inode {
       return listedPaths;
    }
 
-   public Directory(@NonNull File sourceFile) throws RuntimeException {
-      super(sourceFile);
-      childs = getChildsFrom(sourceFile);
-   }
-
    public static @NonNull String[] getChildsFrom(@NonNull File sourceFile) {
       File[] sourceFileChilds = sourceFile.listFiles();
 
@@ -48,6 +43,11 @@ public class Directory extends Inode {
       }
 
       return childs;
+   }
+
+   public Directory(@NonNull File sourceFile) {
+      super(sourceFile);
+      childs = getChildsFrom(sourceFile);
    }
 
    @Override
