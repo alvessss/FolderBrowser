@@ -7,10 +7,9 @@
 
     <RelativeLayout
         android:id="@+id/folder_browser_container_viewgroup"
-        android:layout_width="340dp"
-        android:layout_height="450dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"/>
+        android:layout_width="match_parent"
+        android:layout_height="650dp"
+        android:layout_centerHorizontal="true" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/folder_browser_launcher_button"

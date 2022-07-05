@@ -7,6 +7,15 @@
     android:background="@color/ocean_blue_background"
     tools:ignore="hardCodedText">
 
+    <TextView
+        android:id="@+id/text_view_for_directory_path"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="/"
+        android:textColor="@android:color/white"
+        android:background="@color/ocean_blue_background"
+        android:layout_alignParentTop="true"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_for_directory_content"
         android:layout_width="match_parent"
@@ -14,7 +23,8 @@
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="4"
         tools:listitem="@layout/folder_browser_item"
-        android:layout_alignParentTop="true"/>
+        android:layout_below="@id/text_view_for_directory_path"
+        />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_view_for_previous_directory"
@@ -27,7 +37,8 @@
         android:layout_marginStart="5dp"
         android:layout_alignParentStart="true"
         tools:ignore="ContentDescription"
-        android:layout_above="@id/text_view_for_directory_path"/>
+        android:layout_alignParentBottom="true"
+        />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_view_for_select_file"
@@ -39,16 +50,7 @@
         android:layout_marginBottom="15dp"
         android:layout_marginEnd="5dp"
         android:layout_alignParentEnd="true"
-        android:layout_above="@id/text_view_for_directory_path"
-        tools:ignore="ContentDescription"/>
-
-    <TextView
-        android:id="@+id/text_view_for_directory_path"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="/"
-        android:textColor="@android:color/white"
-        android:background="@color/ocean_blue_background"
+        tools:ignore="ContentDescription"
         android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>
