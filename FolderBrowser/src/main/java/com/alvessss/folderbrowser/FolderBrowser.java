@@ -1,7 +1,6 @@
 package com.alvessss.folderbrowser;
 
 import android.content.Context;
-import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;

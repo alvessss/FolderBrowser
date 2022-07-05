@@ -37,7 +37,7 @@ class RecyclerViewInterface extends RecyclerView.Adapter<RecyclerViewInterface.C
       );
 
       recyclerView.setAdapter((RecyclerView.Adapter)this);
-      recyclerView.setLayoutParams(params);
+      // recyclerView.setLayoutParams(params);
       recyclerView.setLayoutManager(layoutManager);
       recyclerView.setVisibility(View.VISIBLE);
    }
