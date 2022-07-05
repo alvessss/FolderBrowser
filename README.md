@@ -1,4 +1,7 @@
 <h2>This is a Folder Browser/File Explorer emulator made in Java</h2>
+
+[![](https://jitpack.io/v/alvessss/FolderBrowser.svg)](https://jitpack.io/#alvessss/FolderBrowser)
+<hr>
 <p>
     Heres the first look. Things like Themes, Navigation Styles, Custom-icons might come.
 </p>
