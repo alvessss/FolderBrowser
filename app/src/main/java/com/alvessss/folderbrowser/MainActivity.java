@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                showFolderBrowser(view);
+               view.setVisibility(View.GONE);
             }
       });
 
